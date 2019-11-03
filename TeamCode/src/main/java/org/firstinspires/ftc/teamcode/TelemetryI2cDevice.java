@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorMRRangeSensor;
 
-@Autonomous(name = "Telemetry")
-public final class TelemetryOut extends LinearOpMode {
+@Autonomous(name = "I2c Telemetry")
+public final class TelemetryI2cDevice extends LinearOpMode {
     I2cDevice range1 = null;
     I2cDevice range2 = null;
     I2cDeviceSynch range1Reader;
