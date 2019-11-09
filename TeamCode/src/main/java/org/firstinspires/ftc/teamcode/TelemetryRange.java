@@ -16,8 +16,8 @@ public class TelemetryRange extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // get a reference to our compass
-        range1 = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "range1");
-        range2 = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "range2");
+        range1 = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeL");
+        range2 = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeR");
 
         range1.setI2cAddress(I2cAddr.create8bit(0x2a));
         range2.setI2cAddress(I2cAddr.create8bit(0x2c));
