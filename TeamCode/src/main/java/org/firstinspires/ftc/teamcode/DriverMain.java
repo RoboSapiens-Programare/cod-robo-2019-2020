@@ -13,12 +13,19 @@ public final class DriverMain extends RobotHardware {
         waitForStart();
 
         while(opModeIsActive()){
-            if(Math.abs(gamepad1.left_stick_x) > DEADZONE || Math.abs(gamepad1.left_stick_y) > DEADZONE || Math.abs(gamepad1.right_stick_x) > DEADZONE ) {
-                StrafeWithAngle(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, 0.9);
+            StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,
+                            Math.abs(gamepad1.left_stick_x) > DEADZONE? gamepad1.left_stick_x : 0,
+                            Math.abs(gamepad1.right_stick_x) > DEADZONE? gamepad1.right_stick_x : 0,
+                            0.9);
+
+            if(gamepad1.a){
+                ServoBrat.setPosition(0.1);
             }
-            else{
-                StopWheels();
+            else if(gamepad1.b){
+                ServoBrat.setPosition(1);
             }
+
+            
 
         }
     }

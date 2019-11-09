@@ -1,15 +1,26 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 public abstract class RobotHardware extends LinearOpMode {
+    //Motors
     protected DcMotor MotorFR = null;
     protected DcMotor MotorFL = null;
     protected DcMotor MotorBR = null;
     protected DcMotor MotorBL = null;
+
+    //Servos
+    protected Servo ServoBrat = null;
+
+    //Sensors
+    protected ModernRoboticsI2cRangeSensor RangeL = null;
+    protected ModernRoboticsI2cRangeSensor RangeR = null;
 
     public void initialize(){
         MotorFR = hardwareMap.dcMotor.get("MotorFR");
@@ -36,6 +47,16 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         MotorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         MotorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        RangeL = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeL");
+        RangeL.setI2cAddress(I2cAddr.create8bit(0x2a));
+        RangeR = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeR");
+        RangeR.setI2cAddress(I2cAddr.create8bit(0x2c));
+
+        ServoBrat = hardwareMap.servo.get("ServoBrat");
+        ServoBrat.setPosition(1);
+        ServoBrat.setDirection(Servo.Direction.FORWARD);
+
     }
 
     protected void StopWheels(){
@@ -63,7 +84,7 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorBL.setPower(speedFLBR);
     }
 
-    protected void StrafeWithAngle(double angle, double rotate, double maxspeed) {
+    protected void StrafeWithAngle(double angle, double rotate, double speed) {
         //transform angle to vectors
         double drive = Math.cos(angle);
         double strafe = Math.sin(angle);
@@ -73,18 +94,18 @@ public abstract class RobotHardware extends LinearOpMode {
 
         double ScalingCoefficient = 1;
 
-        maxspeed = Range.clip(maxspeed, 0, 0.9);
-        if(Math.max(Math.abs(FLBRNormal), Math.abs(FRBLNormal)) > maxspeed) {
-            ScalingCoefficient = maxspeed / Math.max(Math.abs(FLBRNormal), Math.abs(FRBLNormal));
+        speed = Range.clip(speed, 0, 0.9);
+        if(Math.max(Math.abs(FLBRNormal), Math.abs(FRBLNormal)) > speed) {
+            ScalingCoefficient = speed / Math.max(Math.abs(FLBRNormal), Math.abs(FRBLNormal));
         }
 
         double SpeedFLBR = FLBRNormal * ScalingCoefficient;
         double SpeedFRBL = FRBLNormal * ScalingCoefficient;
 
-        MotorFL.setPower(Range.clip(SpeedFLBR + rotate, -maxspeed, maxspeed));
-        MotorFR.setPower(Range.clip(SpeedFRBL - rotate, -maxspeed, maxspeed));
-        MotorBL.setPower(Range.clip(SpeedFRBL + rotate, -maxspeed, maxspeed));
-        MotorBR.setPower(Range.clip(SpeedFLBR - rotate, -maxspeed, maxspeed));
+        MotorFL.setPower(Range.clip(SpeedFLBR + rotate, -speed, speed));
+        MotorFR.setPower(Range.clip(SpeedFRBL - rotate, -speed, speed));
+        MotorBL.setPower(Range.clip(SpeedFRBL + rotate, -speed, speed));
+        MotorBR.setPower(Range.clip(SpeedFLBR - rotate, -speed, speed));
     }
 
     protected void StrafeWithAngle(double drive, double strafe, double rotate, double maxspeed) {
