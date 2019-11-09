@@ -8,11 +8,7 @@ import org.firstinspires.ftc.teamcode.RobotHardware;
 
 
 @TeleOp(name = "TestMotoare")
-
-
 public class TestMotoare extends RobotHardware {
-
-
 
     @Override
     public void runOpMode() throws InterruptedException {
