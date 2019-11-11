@@ -49,9 +49,9 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         RangeL = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeL");
-        RangeL.setI2cAddress(I2cAddr.create8bit(0x2a));
+        RangeL.setI2cAddress(I2cAddr.create8bit(0x2c));
         RangeR = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeR");
-        RangeR.setI2cAddress(I2cAddr.create8bit(0x2c));
+        RangeR.setI2cAddress(I2cAddr.create8bit(0x2e));
 
         ServoBrat = hardwareMap.servo.get("ServoBrat");
         ServoBrat.setPosition(1);
