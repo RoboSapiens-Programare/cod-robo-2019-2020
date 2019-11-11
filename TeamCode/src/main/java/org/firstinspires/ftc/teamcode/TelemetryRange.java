@@ -19,7 +19,7 @@ public class TelemetryRange extends LinearOpMode {
         range1 = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeL");
         range2 = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeR");
 
-        range1.setI2cAddress(I2cAddr.create8bit(0x2a));
+        range1.setI2cAddress(I2cAddr.create8bit(0x2e));
         range2.setI2cAddress(I2cAddr.create8bit(0x2c));
 
         //ModernRoboticsI2cRangeSensor.Register reg = new ModernRoboticsI2cRangeSensor.Register();
