@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.Timer;
 
 public abstract class AutonomousMain extends RobotHardware {
 
@@ -12,7 +15,10 @@ public abstract class AutonomousMain extends RobotHardware {
         //TODO this
     }
 
-    protected void StrafeWithObstacle(double targetDistance){
+    protected void StrafeWithObstacle(double targetDistance) throws InterruptedException{
+        ElapsedTime ETimer = new ElapsedTime();
+        ETimer.reset();
+
         double errorLeft = RangeL.getDistance(DistanceUnit.CM) - targetDistance;
         double errorRight = RangeR.getDistance(DistanceUnit.CM) - targetDistance;
 
@@ -46,12 +52,13 @@ public abstract class AutonomousMain extends RobotHardware {
             //telemetry.addData("ErrorL", errorLeft);
             //telemetry.addData("ErrorR", errorRight);
             telemetry.addData("Time", constTimer);
+            telemetry.addData("Elapsed Time ", ETimer.milliseconds());
             telemetry.update();
 
             steadyTimer += period;
             constTimer += period;
 
-            //sleep(period);
+            Thread.sleep(period);
         }
     }
 
