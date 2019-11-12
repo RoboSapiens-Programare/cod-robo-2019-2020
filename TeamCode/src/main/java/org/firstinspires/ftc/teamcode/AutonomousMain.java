@@ -22,10 +22,12 @@ public abstract class AutonomousMain extends RobotHardware {
         double errorLeft = RangeL.getDistance(DistanceUnit.CM) - targetDistance;
         double errorRight = RangeR.getDistance(DistanceUnit.CM) - targetDistance;
 
-        double pGain = 1/(targetDistance - 10);
+        double pGain = 0.25/(targetDistance - 5);
+        double derivativeLeft, derivativeRight, auxLeft = errorLeft, auxRight = errorRight;
 
         double speedLeft;
         double speedRight;
+        double dTime;
 
         long steadyTimer = 0, period = 10L, constTimer = 0;
 
@@ -37,8 +39,18 @@ public abstract class AutonomousMain extends RobotHardware {
             }
 
             //Update
+            double aux = ETimer.milliseconds();
             errorLeft = RangeL.getDistance(DistanceUnit.CM) - targetDistance;
             errorRight = RangeR.getDistance(DistanceUnit.CM) - targetDistance;
+            dTime = ETimer.milliseconds() - aux;
+
+            derivativeLeft = auxLeft - errorLeft;
+            derivativeRight = auxRight - errorRight;
+
+
+            //........s e n d   h e l p .......
+
+
 
             speedLeft = Range.clip(errorLeft*pGain, -0.6, 0.6);
             speedRight = Range.clip(errorRight*pGain, -0.6, 0.6);
@@ -49,16 +61,19 @@ public abstract class AutonomousMain extends RobotHardware {
 
             //telemetry.addData("RangeL", RangeL.getDistance(DistanceUnit.CM));
             //telemetry.addData("RangeR", RangeR.getDistance(DistanceUnit.CM));
-            //telemetry.addData("ErrorL", errorLeft);
-            //telemetry.addData("ErrorR", errorRight);
-            telemetry.addData("Time", constTimer);
+            telemetry.addData("ErrorL", errorLeft);
+            telemetry.addData("ErrorR", errorRight);
+            telemetry.addData("dTime", dTime);
             telemetry.addData("Elapsed Time ", ETimer.milliseconds());
             telemetry.update();
 
             steadyTimer += period;
             constTimer += period;
 
-            Thread.sleep(period);
+            auxLeft = errorLeft;
+            auxRight = errorRight;
+
+            //Thread.sleep(period);
         }
     }
 
