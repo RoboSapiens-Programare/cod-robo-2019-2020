@@ -1,12 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public abstract class RobotHardware extends LinearOpMode {
     //Motors
@@ -14,13 +21,26 @@ public abstract class RobotHardware extends LinearOpMode {
     protected DcMotor MotorFL = null;
     protected DcMotor MotorBR = null;
     protected DcMotor MotorBL = null;
+    protected DcMotor MotorBratColectare = null;
 
     //Servos
     protected Servo ServoBrat = null;
+    protected CRServo ServoYAxis = null;
+    protected Servo ServoZAxis = null;
+    protected Servo ServoClampLeft = null;
+    protected Servo ServoClampRight = null;
 
     //Sensors
     protected ModernRoboticsI2cRangeSensor RangeL = null;
     protected ModernRoboticsI2cRangeSensor RangeR = null;
+
+    //Gyro
+    protected BNO055IMU Gyro = null;
+
+    //Constants
+    Orientation lastAngles = new Orientation();
+    double globalAngle;
+
 
     public void initialize(){
         MotorFR = hardwareMap.dcMotor.get("MotorFR");
@@ -48,6 +68,26 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         MotorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //Brat Colectare
+        MotorBratColectare = hardwareMap.dcMotor.get("MotorBrat");
+        MotorBratColectare.setPower(0);
+        MotorBratColectare.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        MotorBratColectare.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        ServoYAxis = hardwareMap.crservo.get("ServoYAxis");
+        ServoYAxis.setPower(0.0);
+
+
+        ServoZAxis = hardwareMap.servo.get("ServoZAxis");
+        ServoZAxis.setPosition(0);
+
+        ServoClampLeft = hardwareMap.servo.get("ServoClampLeft");
+        ServoClampLeft.setPosition(0);
+
+        ServoClampRight = hardwareMap.servo.get("ServoClampRight");
+        ServoClampRight.setPosition(0);
+
+
         RangeL = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeL");
         RangeL.setI2cAddress(I2cAddr.create8bit(0x2c));
         RangeR = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeR");
@@ -56,6 +96,9 @@ public abstract class RobotHardware extends LinearOpMode {
         ServoBrat = hardwareMap.servo.get("ServoBrat");
         ServoBrat.setPosition(1);
         ServoBrat.setDirection(Servo.Direction.FORWARD);
+
+        Gyro = hardwareMap.get( BNO055IMU.class, "imu");
+
 
     }
 
@@ -127,4 +170,61 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorBL.setPower(Range.clip(SpeedFRBL + rotate, -maxspeed, maxspeed));
         MotorBR.setPower(Range.clip(SpeedFLBR - rotate, -maxspeed, maxspeed));
     }
+
+    protected void CalibrateGyro(){
+        BNO055IMU.Parameters REVGyroParameters = new BNO055IMU.Parameters();
+
+        REVGyroParameters.mode = BNO055IMU.SensorMode.IMU;
+        REVGyroParameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        REVGyroParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        REVGyroParameters.loggingEnabled = false;
+
+
+        Gyro.initialize(REVGyroParameters);
+
+        telemetry.addData("Mode", "calibrating...");
+        telemetry.update();
+
+        // make sure the imu gyro is calibrated before continuing.
+        while (!isStopRequested() && !Gyro.isGyroCalibrated()) {
+            sleep(50);
+            idle();
+        }
+
+        ResetAngle();
+
+        telemetry.addData("Mode", "waiting for start");
+        telemetry.addData("imu calib status", Gyro.getCalibrationStatus().toString());
+        telemetry.update();
+    }
+
+    //Function that adds the orientation of the REV integrated gyro to the globalAngle variable
+    protected double GetAngle() {
+        // We have to process the angle because the imu works in euler angles so the Z axis is
+        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+
+        Orientation angles = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles;
+
+        return globalAngle;
+    }
+
+    //Function that resets the global angle to 0
+    protected void ResetAngle() {
+        lastAngles = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        globalAngle = 0;
+    }
+
 }

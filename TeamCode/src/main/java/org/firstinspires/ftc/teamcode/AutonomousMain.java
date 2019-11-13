@@ -5,11 +5,17 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 public abstract class AutonomousMain extends RobotHardware {
 
-
+    @Override
+    public void initialize(){
+        super.initialize();
+        CalibrateGyro();
+    }
 
     protected void StrafeWithEncoders(double angle, double speed, double ticks){
         //TODO this
@@ -23,7 +29,9 @@ public abstract class AutonomousMain extends RobotHardware {
         double errorRight = RangeR.getDistance(DistanceUnit.CM) - targetDistance;
 
         double pGain = 0.25/(targetDistance - 5);
-        double derivativeLeft, derivativeRight, auxLeft = errorLeft, auxRight = errorRight;
+        int AverageCount = 16, AverageIterator = 0; //TODO modify
+        double MeanArrayLeft[] = new double[AverageCount];
+        double MeanArrayRight[] = new double[AverageCount];
 
         double speedLeft;
         double speedRight;
@@ -39,13 +47,8 @@ public abstract class AutonomousMain extends RobotHardware {
             }
 
             //Update
-            double aux = ETimer.milliseconds();
             errorLeft = RangeL.getDistance(DistanceUnit.CM) - targetDistance;
             errorRight = RangeR.getDistance(DistanceUnit.CM) - targetDistance;
-            dTime = ETimer.milliseconds() - aux;
-
-            derivativeLeft = auxLeft - errorLeft;
-            derivativeRight = auxRight - errorRight;
 
 
             //........s e n d   h e l p .......
@@ -55,9 +58,24 @@ public abstract class AutonomousMain extends RobotHardware {
             speedLeft = Range.clip(errorLeft*pGain, -0.6, 0.6);
             speedRight = Range.clip(errorRight*pGain, -0.6, 0.6);
 
+            double aux = ETimer.milliseconds();
+            MeanArrayLeft[AverageIterator++] = speedLeft;
+            MeanArrayRight[AverageIterator++] = speedRight;
+
+            if(AverageIterator >= AverageCount) {
+                AverageIterator = 0;
+            }
+            double meanLeft = 0, meanRight = 0;
+
+            for(int i = 0;  i < AverageCount; i++){
+                meanLeft += MeanArrayLeft[i];
+                meanRight += MeanArrayRight[i];
+            }
+            dTime = ETimer.milliseconds() - aux;
+
 
             //Set Powers
-            SetWheelsPowerTank(speedLeft, speedRight);
+            SetWheelsPowerTank(meanLeft/AverageCount, meanRight/AverageCount);
 
             //telemetry.addData("RangeL", RangeL.getDistance(DistanceUnit.CM));
             //telemetry.addData("RangeR", RangeR.getDistance(DistanceUnit.CM));
@@ -70,11 +88,32 @@ public abstract class AutonomousMain extends RobotHardware {
             steadyTimer += period;
             constTimer += period;
 
-            auxLeft = errorLeft;
-            auxRight = errorRight;
-
             //Thread.sleep(period);
         }
+    }
+
+    protected void Rotate (double Angle) {
+
+        double deadzone = 5;
+        double speed = 0.4;
+
+        if (Angle < 0)
+            speed = - speed;
+
+        double CurrentAngle = GetAngle();
+        double TargetAngle = GetAngle() + Angle;
+
+        if ( TargetAngle > 180) {
+            TargetAngle -= 360;
+        } else if (TargetAngle < - 180) {
+            TargetAngle +=360;
+        }
+
+
+        while ( GetAngle() < TargetAngle - deadzone || GetAngle() > TargetAngle + deadzone) {
+            SetWheelsPowerTank(speed, - speed);
+        }
+        SetWheelsPowerTank(0,0);
     }
 
 }
