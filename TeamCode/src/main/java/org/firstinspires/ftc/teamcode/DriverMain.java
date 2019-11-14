@@ -41,14 +41,17 @@ public final class DriverMain extends RobotHardware {
         }
 
         if(gamepad2.dpad_left){
-            ServoZAxis.setPosition(0);
+            ServoZAxis.setPosition(1);
         }
         else if(gamepad2.dpad_right){
-            ServoZAxis.setPosition(1);
+            ServoZAxis.setPosition(0.4);
         }
 
         if (Math.abs(gamepad2.left_stick_y) > 0.1){
             ServoYAxis.setPower(gamepad2.left_stick_y);
+        }
+        else {
+            ServoYAxis.setPower(0);
         }
 
 
@@ -63,9 +66,9 @@ public final class DriverMain extends RobotHardware {
 
         //Motors
         if(gamepad2.left_trigger > DEADZONE){
-            MotorBratColectare.setPower(Range.clip(gamepad2.left_trigger / 3, 0, 0.3));
+            MotorBratColectare.setPower(Range.clip(gamepad2.left_trigger / 2, 0, 0.5));
         } else if(gamepad2.right_trigger > DEADZONE){
-            MotorBratColectare.setPower(Range.clip(-gamepad2.right_trigger / 3, -0.3, 0));
+            MotorBratColectare.setPower(Range.clip(-gamepad2.right_trigger / 2, -0.5, 0));
         } else
             MotorBratColectare.setPower(0);
     }

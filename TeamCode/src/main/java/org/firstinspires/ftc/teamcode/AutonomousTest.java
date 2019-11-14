@@ -14,10 +14,41 @@ public final class AutonomousTest extends AutonomousMain {
 
         while(opModeIsActive()){
             if(gamepad1.a){
-                StrafeWithObstacle(20);
+                StrafeWithEncoders(0, 0.4, 200);
+                //StrafeWithObstacle(20);
             }
             if(gamepad1.b){
-                StrafeWithObstacle(10);
+                StrafeWithEncoders(0, 0.4, 300);
+                //StrafeWithEncoders(180, 0.4, 50);
+                //StrafeWithObstacle(10);
+            }
+            if (gamepad1.y) {
+                StrafeWithEncoders(0, 0.4, 400);
+                //StrafeWithEncoders(90, 0.4, 50);
+            }
+            if (gamepad1.x){
+                StrafeWithEncoders(0, 0.4, 500);
+                //StrafeWithEncoders(45, 0.4, 100);
+            }
+
+            if (gamepad1.dpad_up) {
+                Rotate(90);
+                sleep(1000);
+                Rotate(90);
+                sleep(1000);
+                Rotate(90);
+                sleep(1000);
+                Rotate(90);
+                sleep(1000);
+                Rotate(-45);
+                sleep(1000);
+                Rotate(-90);
+                sleep(1000);
+                Rotate(-135);
+                sleep(1000);
+                Rotate(-235);
+            } else if (gamepad1.dpad_down) {
+                Rotate(- 90);
             }
 
             StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,

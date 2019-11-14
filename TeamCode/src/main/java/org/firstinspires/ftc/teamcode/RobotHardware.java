@@ -37,9 +37,11 @@ public abstract class RobotHardware extends LinearOpMode {
     //Gyro
     protected BNO055IMU Gyro = null;
 
-    //Constants
+    //Global Variables
     Orientation lastAngles = new Orientation();
     double globalAngle;
+    static double FRBLResult;
+    static double FLBRResult;
 
 
     public void initialize(){
@@ -90,8 +92,10 @@ public abstract class RobotHardware extends LinearOpMode {
 
         RangeL = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeL");
         RangeL.setI2cAddress(I2cAddr.create8bit(0x2c));
+        RangeL.enableLed(true);
         RangeR = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeR");
         RangeR.setI2cAddress(I2cAddr.create8bit(0x2e));
+        RangeR.enableLed(true);
 
         ServoBrat = hardwareMap.servo.get("ServoBrat");
         ServoBrat.setPosition(1);
@@ -129,11 +133,13 @@ public abstract class RobotHardware extends LinearOpMode {
 
     protected void StrafeWithAngle(double angle, double rotate, double speed) {
         //transform angle to vectors
-        double drive = Math.cos(angle);
-        double strafe = Math.sin(angle);
+        double drive = Math.cos(Math.toRadians(angle));
+        double strafe = Math.sin(Math.toRadians(angle));
 
-        double FLBRNormal = Math.signum(drive)*Math.pow(drive,2) + Math.signum(strafe)*Math.pow(strafe,2);
-        double FRBLNormal = Math.signum(drive)*Math.pow(drive,2) - Math.signum(strafe)*Math.pow(strafe,2);
+        CalculateMecanumResult(drive, strafe);
+
+        double FLBRNormal = FLBRResult;
+        double FRBLNormal = FRBLResult;
 
         double ScalingCoefficient = 1;
 
@@ -152,8 +158,10 @@ public abstract class RobotHardware extends LinearOpMode {
     }
 
     protected void StrafeWithAngle(double drive, double strafe, double rotate, double maxspeed) {
-        double FLBRNormal = Math.signum(drive)*Math.pow(drive,2) + Math.signum(strafe)*Math.pow(strafe,2);
-        double FRBLNormal = Math.signum(drive)*Math.pow(drive,2) - Math.signum(strafe)*Math.pow(strafe,2);
+        CalculateMecanumResult(drive, strafe);
+
+        double FLBRNormal = FLBRResult;
+        double FRBLNormal = FRBLResult;
 
         double ScalingCoefficient = 1;
 
@@ -225,6 +233,26 @@ public abstract class RobotHardware extends LinearOpMode {
         lastAngles = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         globalAngle = 0;
+    }
+
+    //Function that calculates mecanum vectors based on XY coordinates
+    protected void CalculateMecanumResult(double x, double y){
+        FRBLResult = Math.signum(x)*Math.pow(x,2) + Math.signum(y)*Math.pow(y,2);
+        FLBRResult = Math.signum(x)*Math.pow(x,2) - Math.signum(y)*Math.pow(y,2);
+    }
+
+    protected void ResetAllEncoders() {
+        MotorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MotorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MotorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MotorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    protected void RunWithAllEncoders() {
+        MotorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        MotorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        MotorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        MotorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }
