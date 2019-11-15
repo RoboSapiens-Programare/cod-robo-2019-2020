@@ -13,18 +13,43 @@ public final class AutonomousImpingeTava extends AutonomousMain {
         waitForStart();
 
         // EXPERIMENTAL
-        StrafeWithEncoders(45, 0.4, 2260);
 
-        //StrafeWithEncoders(90, 0.4, 2000);
-        //StrafeWithEncoders(0, 0.4, 1050);
+        StrafeWithEncoders(0, 0.5, 200);
 
-        Rotate(90);
+        RotateRelative(90);
 
-        ServoBrat.setPosition(0.1); //1 si 0.1
+        //mers in fata pana la o dist de perete TODO
 
-        sleep(500);
+        sleep(100);
 
-        StrafeWithEncoders(90, 0.8, 1800);
+        StrafeToObstacle(25); RotateAbsolute(90);
+
+        StrafeWithEncoders(-90, 0.5, 1100); RotateAbsolute(90);
+
+        ServoBrat.setPosition(0.1);
+
+        sleep(200);
+
+        StrafeWithEncoders(90, 0.8, 4000);
+
+        ServoBrat.setPosition(1);
+
+        RotateAbsolute(90);
+
+        sleep(200);
+
+        //Ocoleste tava
+        StrafeWithEncoders(-180 , 0.5 , 1600);
+        RotateAbsolute(90);
+        StrafeWithEncoders(-90 , 0.5 , 2500);
+        RotateAbsolute(90);
+        StrafeToObstacle(30);RotateAbsolute(90);
+        StrafeWithEncoders(90 , 0.8 , 3500);
+        RotateAbsolute(90);
+
+        //Parcheaza
+        StrafeUntilColor(0.5, -180, ColorUnderneath, 3);
+
 
         //dupa ce trag tava, o ocolesc, intai la dreapta
         //apoi in fata, apoi la stanga, apoi in spate

@@ -284,7 +284,7 @@ public class VuforiaSkyStoneNavigation extends LinearOpMode {
             phoneYRotate = 90;
         }
 
-        // Rotate the phone vertical about the X axis if it's in portrait mode
+        // RotateRelative the phone vertical about the X axis if it's in portrait mode
         if (PHONE_IS_PORTRAIT) {
             phoneXRotate = 90 ;
         }

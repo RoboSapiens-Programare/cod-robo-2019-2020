@@ -32,23 +32,23 @@ public final class AutonomousTest extends AutonomousMain {
             }
 
             if (gamepad1.dpad_up) {
-                Rotate(90);
+                RotateRelative(90);
                 sleep(1000);
-                Rotate(90);
+                RotateRelative(90);
                 sleep(1000);
-                Rotate(90);
+                RotateRelative(90);
                 sleep(1000);
-                Rotate(90);
+                RotateRelative(90);
                 sleep(1000);
-                Rotate(-45);
+                RotateRelative(-45);
                 sleep(1000);
-                Rotate(-90);
+                RotateRelative(-90);
                 sleep(1000);
-                Rotate(-135);
+                RotateRelative(-135);
                 sleep(1000);
-                Rotate(-235);
+                RotateRelative(-235);
             } else if (gamepad1.dpad_down) {
-                Rotate(- 90);
+                RotateRelative(- 90);
             }
 
             StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,

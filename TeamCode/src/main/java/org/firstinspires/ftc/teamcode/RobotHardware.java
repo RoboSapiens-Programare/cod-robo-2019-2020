@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -34,7 +35,8 @@ public abstract class RobotHardware extends LinearOpMode {
     //Sensors
     protected ModernRoboticsI2cRangeSensor RangeL = null;
     protected ModernRoboticsI2cRangeSensor RangeR = null;
-    protected ColorSensor ColorSide = null;
+    protected ModernRoboticsI2cColorSensor ColorSide = null;
+    protected ModernRoboticsI2cColorSensor ColorUnderneath = null;
 
     //Gyro
     protected BNO055IMU Gyro = null;
@@ -87,10 +89,10 @@ public abstract class RobotHardware extends LinearOpMode {
         ServoZAxis.setPosition(0);
 
         ServoClampLeft = hardwareMap.servo.get("ServoClampLeft");
-        ServoClampLeft.setPosition(0);
+        ServoClampLeft.setPosition(0.4);
 
         ServoClampRight = hardwareMap.servo.get("ServoClampRight");
-        ServoClampRight.setPosition(0);
+        ServoClampRight.setPosition(0.4);
 
 
         RangeL = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeL");
@@ -99,6 +101,11 @@ public abstract class RobotHardware extends LinearOpMode {
         RangeR = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeR");
         RangeR.setI2cAddress(I2cAddr.create8bit(0x2e));
         RangeR.enableLed(true);
+
+        ColorSide = hardwareMap.get(ModernRoboticsI2cColorSensor.class, "ColorSide");
+        ColorSide.enableLed(true);
+        ColorUnderneath = hardwareMap.get(ModernRoboticsI2cColorSensor.class, "ColorUnderneath");
+        ColorUnderneath.enableLed(true);
 
         ServoBrat = hardwareMap.servo.get("ServoBrat");
         ServoBrat.setPosition(1);
@@ -134,9 +141,12 @@ public abstract class RobotHardware extends LinearOpMode {
     }
 
     protected void StrafeWithAngle(double angle, double rotate, double speed) {
+
+        angle += 90;
+
         //transform angle to vectors
-        double drive = Math.cos(Math.toRadians(angle));
-        double strafe = Math.sin(Math.toRadians(angle));
+        double drive = Math.sin(Math.toRadians(angle));
+        double strafe = Math.cos(Math.toRadians(angle));
 
         CalculateMecanumResult(drive, strafe);
 
