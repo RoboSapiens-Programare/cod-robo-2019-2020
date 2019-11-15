@@ -12,9 +12,11 @@ public final class AutonomousImpingeTava extends AutonomousMain {
 
         waitForStart();
 
+        // EXPERIMENTAL
+        StrafeWithEncoders(45, 0.4, 2260);
 
-        StrafeWithEncoders(90, 0.4, 2000);
-        StrafeWithEncoders(0, 0.4, 1050);
+        //StrafeWithEncoders(90, 0.4, 2000);
+        //StrafeWithEncoders(0, 0.4, 1050);
 
         Rotate(90);
 
@@ -22,7 +24,14 @@ public final class AutonomousImpingeTava extends AutonomousMain {
 
         sleep(500);
 
-        StrafeWithEncoders(90, 0.6, 900);
+        StrafeWithEncoders(90, 0.8, 1800);
+
+        //dupa ce trag tava, o ocolesc, intai la dreapta
+        //apoi in fata, apoi la stanga, apoi in spate
+
+        //dupa ce am impins tava, ma duc in dreapta
+        // ma duc in spate pana la zid (senzori si poate ne rotim 180)
+        //dupa mergem la dreapta pana la linie
 
     }
 }

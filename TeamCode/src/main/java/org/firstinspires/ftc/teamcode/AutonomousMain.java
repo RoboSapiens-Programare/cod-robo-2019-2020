@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -19,6 +20,16 @@ public abstract class AutonomousMain extends RobotHardware {
         CalibrateGyro();
     }
 
+
+    //SENSOR INPUT
+    //Function that questions the selected sensor for the selected color
+    protected boolean CheckForColor(ColorSensor SensorToQuestion, int HUE){
+
+
+        return true;
+    }
+
+    //MOVEMENT
     protected void StrafeWithEncoders(double angle, double speed, double ticks){
 //        //CONSTANTE
 //        final double STRAIGHTTICKS = 0, STRAFETICKS = 0;

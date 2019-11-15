@@ -18,9 +18,6 @@ public final class DriverMain extends RobotHardware {
             Gamepad1();
             Gamepad2();
 
-            telemetry.addData("YAxisParam", YAxisPosition);
-            telemetry.update();
-
         }
     }
 
@@ -28,7 +25,7 @@ public final class DriverMain extends RobotHardware {
         StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,
                 Math.abs(gamepad1.left_stick_x) > DEADZONE? gamepad1.left_stick_x : 0,
                 Math.abs(gamepad1.right_stick_x) > DEADZONE? gamepad1.right_stick_x : 0,
-                0.9);
+                0.7);
     }
 
     private void Gamepad2(){

@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.I2cAddr;
@@ -33,6 +34,7 @@ public abstract class RobotHardware extends LinearOpMode {
     //Sensors
     protected ModernRoboticsI2cRangeSensor RangeL = null;
     protected ModernRoboticsI2cRangeSensor RangeR = null;
+    protected ColorSensor ColorSide = null;
 
     //Gyro
     protected BNO055IMU Gyro = null;
@@ -75,6 +77,7 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorBratColectare.setPower(0);
         MotorBratColectare.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         MotorBratColectare.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        MotorBratColectare.setDirection(DcMotorSimple.Direction.FORWARD);
 
         ServoYAxis = hardwareMap.crservo.get("ServoYAxis");
         ServoYAxis.setPower(0.0);
@@ -99,9 +102,8 @@ public abstract class RobotHardware extends LinearOpMode {
 
         ServoBrat = hardwareMap.servo.get("ServoBrat");
         ServoBrat.setPosition(1);
-        ServoBrat.setDirection(Servo.Direction.FORWARD);
 
-        Gyro = hardwareMap.get( BNO055IMU.class, "imu");
+        Gyro = hardwareMap.get(BNO055IMU.class, "imu");
 
 
     }
@@ -114,7 +116,7 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorFR.setPower(speedFR);
         MotorBR.setPower(speedBR);
         MotorFL.setPower(speedFL);
-        MotorBL.setPower(speedBL);
+         MotorBL.setPower(speedBL);
     }
 
     protected void SetWheelsPowerTank(double speedL, double speedR){
@@ -237,8 +239,8 @@ public abstract class RobotHardware extends LinearOpMode {
 
     //Function that calculates mecanum vectors based on XY coordinates
     protected void CalculateMecanumResult(double x, double y){
-        FRBLResult = Math.signum(x)*Math.pow(x,2) + Math.signum(y)*Math.pow(y,2);
-        FLBRResult = Math.signum(x)*Math.pow(x,2) - Math.signum(y)*Math.pow(y,2);
+        FRBLResult = Math.signum(x)*Math.pow(x,2) - Math.signum(y)*Math.pow(y,2);
+        FLBRResult = Math.signum(x)*Math.pow(x,2) + Math.signum(y)*Math.pow(y,2);
     }
 
     protected void ResetAllEncoders() {
