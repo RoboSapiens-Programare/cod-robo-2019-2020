@@ -1,19 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import java.lang.annotation.Target;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
 
 public abstract class AutonomousMain extends RobotHardware {
 
@@ -31,8 +23,8 @@ public abstract class AutonomousMain extends RobotHardware {
     }
 
     //Function that questions the selected sensor for the selected color
-    protected boolean CheckForColor(ModernRoboticsI2cColorSensor SensorToQuestion, int HUE){
-        if(Math.abs(SensorToQuestion.readUnsignedByte(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER) - HUE) <= 1){
+    protected boolean CheckForColor(ModernRoboticsI2cColorSensor SensorToQuestion, int HUE_A , int HUE_B){
+        if(SensorToQuestion.readUnsignedByte(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER) >= HUE_A && SensorToQuestion.readUnsignedByte(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER) <= HUE_B){
             return true;
         }else{
             return false;
@@ -50,22 +42,37 @@ public abstract class AutonomousMain extends RobotHardware {
 
         angle += 90;
 
-        double y = Math.cos(Math.toRadians(angle));
-        double x = Math.sin(Math.toRadians(angle));
+        double x = Math.cos(Math.toRadians(angle));
+        double y = Math.sin(Math.toRadians(angle));
 
-        CalculateMecanumResult(x , y);
+        CalculateMecanumResult(y , x);
 
-        while(opModeIsActive() && (Math.abs(GetMotorEncodersAverage(new DcMotor[]{MotorFL, MotorBR})) < Math.abs(FLBRResult*ticks)
-              || Math.abs(GetMotorEncodersAverage(new DcMotor[]{MotorFR, MotorBL})) < Math.abs(FRBLResult*ticks))){
+        double TargetFLBR = FLBRResult;
+        double TargetFRBL = FRBLResult;
+
+        int AngleIterator = 0;
+
+        while(opModeIsActive() && (Math.abs(GetMotorEncodersAverage(new DcMotor[]{MotorFL, MotorBR})) < Math.abs(TargetFLBR*ticks)
+              || Math.abs(GetMotorEncodersAverage(new DcMotor[]{MotorFR, MotorBL})) < Math.abs(TargetFRBL*ticks))){
             telemetry.addData("AverageL", GetMotorEncodersAverage(new DcMotor[]{MotorFL, MotorBR}));
-            telemetry.addData("FLBR" , FLBRResult*ticks);
+            telemetry.addData("FLBR" , TargetFLBR*ticks);
             telemetry.addData("AverageR", GetMotorEncodersAverage(new DcMotor[]{MotorFR, MotorBL}));
-            telemetry.addData("FRBL" , FRBLResult*ticks);
+            telemetry.addData("FRBL" , TargetFRBL*ticks);
             telemetry.addData("Gyro reads:", GetAngle());
             telemetry.update();
 
+            AngleIterator++;
+            if(AngleIterator >= 60) {
+                RotateReset();
+                StrafeWithAngle(angle, 0, speed);
+                AngleIterator = 0;
+            }
+
+            sleep(1);
             idle();
         }
+
+        //RotateReset();
 
         StopWheels();
 
@@ -78,7 +85,7 @@ public abstract class AutonomousMain extends RobotHardware {
         double errorLeft = RangeL.getDistance(DistanceUnit.CM) - targetDistance;
         double errorRight = RangeR.getDistance(DistanceUnit.CM) - targetDistance;
 
-        double pGain = 1 / (targetDistance-5);
+        double pGain = 0.0666;
         int AverageCount = 8, AverageIterator = 0; //TODO modify
         double[] MeanArrayLeft = new double[AverageCount + 1];
         double[] MeanArrayRight = new double[AverageCount + 1];
@@ -114,7 +121,7 @@ public abstract class AutonomousMain extends RobotHardware {
             }
 
             if (AngleIterator >= ResetAngle){
-                RotateAbsolute(90);
+                RotateReset();
                 AngleIterator = 0;
             }
 
@@ -157,6 +164,10 @@ public abstract class AutonomousMain extends RobotHardware {
             telemetry.update();
 
         }
+
+        ResetAngle();
+
+        StopWheels();
     }
 
     protected void StrafeWithObstacle(double targetDistance) throws InterruptedException{
@@ -260,19 +271,28 @@ public abstract class AutonomousMain extends RobotHardware {
         }
     }
 
-    protected void StrafeUntilColor(double speed, double angle, ModernRoboticsI2cColorSensor SensorToQuestion, int HUE){
+    protected void StrafeUntilColor(double speed, double angle, ModernRoboticsI2cColorSensor SensorToQuestion, int HUE_A , int HUE_B){
         StrafeWithAngle(angle, 0, speed);
 
-        while(!CheckForColor(SensorToQuestion, HUE) && opModeIsActive()){
+        int AngleIterator = 0;
+
+        while(!CheckForColor(SensorToQuestion, HUE_A , HUE_B) && opModeIsActive()){
             telemetry.addData("Color Read", SensorToQuestion.read8(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER));
             telemetry.update();
+            StrafeWithAngle(angle, 0, speed);
+            AngleIterator++;
+            if(AngleIterator >= 60) {
+                RotateReset();
+                StrafeWithAngle(angle, 0, speed);
+                AngleIterator = 0;
+            }
             idle();
         }
 
         StopWheels();
     }
 
-    protected void RotateRelative(double Angle) {
+    protected void RotateRelative(double Angle){
 
         double deadzone_big = 15;
         double deadzone_small = 5;
@@ -302,20 +322,21 @@ public abstract class AutonomousMain extends RobotHardware {
         }
 
         SetWheelsPowerTank(0,0);
+
+        ResetAngle();
     }
 
-    protected void RotateAbsolute(double Angle){
+    protected void RotateReset(){
         double deadzone_big = 15;
         double deadzone_small = 3;
         double speed = 0.4;
 
-        if (Angle - GetAngle() < 0)
+        if (-GetAngle() < 0)
             speed = - speed;
 
         SetWheelsPowerTank(-speed , speed);
 
-        while (opModeIsActive() && Math.abs(Angle - GetAngle()) > deadzone_big) {
-            telemetry.addData("sunt in modul normal", Angle);
+        while (opModeIsActive() && Math.abs(-GetAngle()) > deadzone_big) {
             telemetry.addData("m-am rotit pana la ", GetAngle());
             telemetry.update();
             idle();
@@ -323,15 +344,17 @@ public abstract class AutonomousMain extends RobotHardware {
 
         SetWheelsPowerTank(-speed/2 , speed/2);
 
-        while (opModeIsActive() && Math.abs(Angle - GetAngle()) > deadzone_small) {
+        while (opModeIsActive() && Math.abs(-GetAngle()) > deadzone_small) {
             telemetry.addData("sunt in modul incet", " ");
             telemetry.addData("m-am rotit pana la ", GetAngle());
             telemetry.update();
             idle();
         }
 
-        SetWheelsPowerTank(0,0);
+        StopWheels();
     }
+
+
 
     private int GetMotorEncodersAverage(DcMotor[] arr){
         int MeanTicks = 0;

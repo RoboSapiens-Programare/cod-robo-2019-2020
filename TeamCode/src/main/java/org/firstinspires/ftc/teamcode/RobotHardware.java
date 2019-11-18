@@ -123,7 +123,7 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorFR.setPower(speedFR);
         MotorBR.setPower(speedBR);
         MotorFL.setPower(speedFL);
-         MotorBL.setPower(speedBL);
+        MotorBL.setPower(speedBL);
     }
 
     protected void SetWheelsPowerTank(double speedL, double speedR){
@@ -248,9 +248,9 @@ public abstract class RobotHardware extends LinearOpMode {
     }
 
     //Function that calculates mecanum vectors based on XY coordinates
-    protected void CalculateMecanumResult(double x, double y){
-        FRBLResult = Math.signum(x)*Math.pow(x,2) - Math.signum(y)*Math.pow(y,2);
-        FLBRResult = Math.signum(x)*Math.pow(x,2) + Math.signum(y)*Math.pow(y,2);
+    protected void CalculateMecanumResult(double y, double x){
+        FRBLResult = Math.signum(y)*Math.pow(y,2) - Math.signum(x)*Math.pow(x,2);
+        FLBRResult = Math.signum(y)*Math.pow(y,2) + Math.signum(x)*Math.pow(x,2);
     }
 
     protected void ResetAllEncoders() {
