@@ -54,7 +54,7 @@ public final class DriverMain extends RobotHardware {
             ServoClampLeft.setPosition(0);
             ServoClampRight.setPosition(0);
         } else if (gamepad2.right_bumper) {
-            ServoClampLeft.setPosition(0.4);
+            ServoClampLeft.setPosition(0.8);
             ServoClampRight.setPosition(0.4);
         }
 

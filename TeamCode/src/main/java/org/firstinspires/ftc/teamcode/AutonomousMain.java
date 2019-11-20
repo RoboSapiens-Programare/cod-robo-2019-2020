@@ -61,7 +61,7 @@ public abstract class AutonomousMain extends RobotHardware {
             telemetry.addData("Gyro reads:", GetAngle());
             telemetry.update();
 
-            AngleIterator++;
+            //AngleIterator++;
             if(AngleIterator >= 60) {
                 RotateReset();
                 StrafeWithAngle(angle, 0, speed);
@@ -279,8 +279,8 @@ public abstract class AutonomousMain extends RobotHardware {
         while(!CheckForColor(SensorToQuestion, HUE_A , HUE_B) && opModeIsActive()){
             telemetry.addData("Color Read", SensorToQuestion.read8(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER));
             telemetry.update();
-            StrafeWithAngle(angle, 0, speed);
-            AngleIterator++;
+            //StrafeWithAngle(angle, 0, speed);
+            //AngleIterator++;
             if(AngleIterator >= 60) {
                 RotateReset();
                 StrafeWithAngle(angle, 0, speed);
