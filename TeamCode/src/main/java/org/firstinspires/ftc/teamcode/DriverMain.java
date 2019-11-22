@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 public final class DriverMain extends RobotHardware {
     static final double DEADZONE = 0.1;
     double YAxisPosition = 0.4;
+    boolean bPrecisionMode = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -23,10 +24,17 @@ public final class DriverMain extends RobotHardware {
     }
 
     private void Gamepad1(){
-        StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,
-                Math.abs(gamepad1.left_stick_x) > DEADZONE? gamepad1.left_stick_x : 0,
-                Math.abs(gamepad1.right_stick_x) > DEADZONE? gamepad1.right_stick_x : 0,
-                0.5);
+        StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? bPrecisionMode? -gamepad1.left_stick_y/2 : -gamepad1.left_stick_y : 0,
+                Math.abs(gamepad1.left_stick_x) > DEADZONE? bPrecisionMode? gamepad1.left_stick_x/2 : gamepad1.left_stick_x : 0,
+                Math.abs(gamepad1.right_stick_x) > DEADZONE? bPrecisionMode? gamepad1.right_stick_x/3 : gamepad1.right_stick_x : 0,
+                0.7);
+
+        if(gamepad1.left_bumper){
+            bPrecisionMode = true;
+        }
+        else if(gamepad1.right_bumper){
+            bPrecisionMode = false;
+        }
     }
 
     private void Gamepad2() {
@@ -55,7 +63,7 @@ public final class DriverMain extends RobotHardware {
             ServoClampRight.setPosition(0);
         } else if (gamepad2.right_bumper) {
             ServoClampLeft.setPosition(0.4);
-            ServoClampRight.setPosition(0.4);
+            ServoClampRight.setPosition(0.2);
         }
 
         //Motors

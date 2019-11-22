@@ -86,7 +86,7 @@ public abstract class RobotHardware extends LinearOpMode {
 
 
         ServoZAxis = hardwareMap.servo.get("ServoZAxis");
-        ServoZAxis.setPosition(0);
+        ServoZAxis.setPosition(0.5);
 
         ServoClampLeft = hardwareMap.servo.get("ServoClampLeft");
         ServoClampLeft.setPosition(0.4);
