@@ -14,35 +14,29 @@ public final class AutonomousImpingeTavaBlue extends AutonomousMain {
 
         // EXPERIMENTAL
 
+        //Merg pana la 40 de cm de perete
         StrafeWithEncoders(0, 0.5, 200); RotateReset();
-
         RotateRelative(90);
-
-        //mers in fata pana la o dist de perete TODO
-
         sleep(100);
+        StrafeToObstacle(40); //TODO
 
-        StrafeToObstacle(40);
-
+        //Merg pana la tava si o apuc
         StrafeWithEncoders(-90, 0.5, 1100); RotateReset();
-
         ServoBrat.setPosition(0.1);
-
         sleep(200);
 
-        StrafeWithEncoders(90, 0.8, 5000);
-
+        //Trag tava si ma desprind
+        StrafeWithEncoders(90, 0.6, 2500);
         ServoBrat.setPosition(1); RotateReset();
-
         sleep(200);
 
-        //Ocoleste tava
+        //Ocolesc tava
         StrafeToObstacle(100);
         StrafeWithEncoders(-90 , 0.5 , 2200); RotateReset();
         StrafeToObstacle(30);
-        StrafeWithEncoders(90 , 0.8 , 3500); RotateReset();
+        StrafeWithEncoders(90 , 0.8 , 2500); RotateReset();
 
-        //Parcheaza
+        //Parchez
         StrafeUntilColor(0.5, -180, ColorUnderneath, 2 , 4);
 
 

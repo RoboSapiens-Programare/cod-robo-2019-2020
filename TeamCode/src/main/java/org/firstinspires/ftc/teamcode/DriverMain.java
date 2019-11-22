@@ -26,7 +26,7 @@ public final class DriverMain extends RobotHardware {
         StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,
                 Math.abs(gamepad1.left_stick_x) > DEADZONE? gamepad1.left_stick_x : 0,
                 Math.abs(gamepad1.right_stick_x) > DEADZONE? gamepad1.right_stick_x : 0,
-                0.7);
+                0.5);
     }
 
     private void Gamepad2() {
@@ -38,9 +38,9 @@ public final class DriverMain extends RobotHardware {
         }
 
         if (gamepad2.dpad_left) {
-            ServoZAxis.setPosition(1);
+            ServoZAxis.setPosition(0);
         } else if (gamepad2.dpad_right) {
-            ServoZAxis.setPosition(0.4);
+            ServoZAxis.setPosition(0.5);
         }
 
         if (Math.abs(gamepad2.left_stick_y) > 0.1) {
@@ -54,7 +54,7 @@ public final class DriverMain extends RobotHardware {
             ServoClampLeft.setPosition(0);
             ServoClampRight.setPosition(0);
         } else if (gamepad2.right_bumper) {
-            ServoClampLeft.setPosition(0.8);
+            ServoClampLeft.setPosition(0.4);
             ServoClampRight.setPosition(0.4);
         }
 

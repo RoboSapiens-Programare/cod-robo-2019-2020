@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Autonomie Sky Stone")
-public final class AutonomousSkyStone extends AutonomousMain {
+@Autonomous(name = "Autonomie Sky Stone Red") //TODO momentan e copiat dupa blue
+public final class AutonomousSkyStoneRed extends AutonomousMain {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
