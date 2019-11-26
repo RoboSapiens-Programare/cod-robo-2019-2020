@@ -402,19 +402,18 @@ public abstract class AutonomousMain extends RobotHardware {
         //Mergem in fata si rotim sa fim cu senzorul inspre caramizi
         StrafeWithEncoders(0, 0.7, 300); RotateReset();
         RotateRelative(-90);
-
         StrafeToObstacle(5); RotateReset();
 
         //Mergem pana gasim ceva de culoarea galbena
         RotateRelative(180);
-        StrafeWithEncoders(180, 0.3, 50);
-        StrafeWithEncoders(-90, 0.4, 200);
-        StrafeUntilColor(0.1, -90, ColorSide, 1 , 16); RotateReset();
+        StrafeWithEncoders(180, 0.3, 150); sleep(100); ResetAngle();
+        StrafeWithEncoders(-90, 0.4, 350); sleep(100);
+        StrafeUntilColor(0.17, -90, ColorSide, 1 , 16);
         sleep(100);
 
         //Incepem sa le luam in ordine pana ajungem la unul negru
-        StrafeUntilColor(0.15, 0, ColorSide, 9 , 16 , 0 , 10); RotateReset();
-        StrafeWithEncoders(0, 0.2, 80); RotateReset();
+        StrafeUntilColor(0.2, 0, ColorSide, 9 , 16 , 0 , 7); RotateReset();
+        //StrafeWithEncoders(0, 0.25, 30); RotateReset();
 
         //Dam bratul in jos
         ServoBrat.setPosition(0.1);
@@ -422,7 +421,8 @@ public abstract class AutonomousMain extends RobotHardware {
 
         //Tragem ala in building zone
         StrafeWithEncoders(90, 0.7, 900); RotateReset();
-        StrafeUntilColor(0.4, 0, ColorUnderneath, 2 , 4 , 5 , 300 , 20); RotateReset();
+        StrafeUntilColor(0.5, 0, ColorUnderneath, 2 , 4 , 1 , 300 , 20); RotateReset();
+        StrafeWithEncoders(0, 0.5, 300);
 
         //Ridicam bratul
         RotateRelative(90);
@@ -430,7 +430,7 @@ public abstract class AutonomousMain extends RobotHardware {
         sleep(200);
         RotateRelative(-90);
 
-        StrafeWithEncoders(180, 0.4, 200); RotateReset();
+        StrafeWithEncoders(180, 0.5, 700); RotateReset();
 
         /*StrafeToObstacle(90);RotateReset();
 
@@ -476,12 +476,13 @@ public abstract class AutonomousMain extends RobotHardware {
         StrafeToObstacle(5);
 
         //Mergem pana gasim ceva de culoarea galbena
+        StrafeWithEncoders(-90, 0.4, 200); sleep(100);
         StrafeUntilColor(0.2, -90, ColorSide, 1 , 16); RotateReset();
         sleep(200);
 
         //Incepem sa le luam in ordine pana ajungem la unul negru
-        StrafeUntilColor(0.3, 180, ColorSide, 9 , 16 , 0 , 10);
-        //StrafeWithEncoders(180, 0.2, 30); RotateReset();
+        StrafeUntilColor(0.25, 180, ColorSide, 9 , 16 , 0 , 5);
+        StrafeWithEncoders(0, 0.2, 20); RotateReset();
 
         sleep(200);
 
@@ -491,11 +492,12 @@ public abstract class AutonomousMain extends RobotHardware {
         sleep(200);
 
         //Tragem ala in building zone
-        StrafeWithEncoders(90, 0.7, 500); RotateReset();
-        StrafeUntilColor(0.4, 180, ColorUnderneath, 9 , 11 , 5 , 300); RotateReset();
+        StrafeWithEncoders(90, 0.7, 600); RotateReset();
+        StrafeUntilColor(0.4, 180, ColorUnderneath, 9 , 11 , 5 , 300 , 20); RotateReset();
 
         //Ridicam bratul
         RotateRelative(-90);
+        StrafeWithEncoders(-90, 0.7, 800);
         sleep(300);
         ServoBrat.setPosition(1);
         RotateRelative(90);
@@ -523,22 +525,23 @@ public abstract class AutonomousMain extends RobotHardware {
             //StrafeWithEncoders(0, 0.2, 80); RotateReset();
         }
 
-        sleep(200);
+        //123sleep(200);
 
         //Dam bratul in jos
         ServoBrat.setPosition(0.1);
 
-        sleep (200);
+        sleep (100);
 
         //Tragem ala in building zone
-        StrafeWithEncoders(90, 0.6, 500); RotateReset();
-        StrafeUntilColor(0.5, 180, ColorUnderneath, 9 , 11 , 5 , 300); RotateReset();
+        StrafeWithEncoders(90, 0.6, 600); RotateReset();
+        StrafeUntilColor(0.5, 180, ColorUnderneath, 9 , 11 , 5 , 300 , 20); RotateReset();
 
         //Ridicam bratul
         RotateRelative(-90);
-        sleep(300);
+        StrafeWithEncoders(-90, 0.7, 800);
+        sleep(100);
         ServoBrat.setPosition(1);
-        sleep(300);
+        StrafeUntilColor(0.5, 90, ColorUnderneath, 9 , 11 , 5 , 300); RotateReset();
 
         /*//Ne dam mai in drepta
         StrafeWithEncoders(-90, 0.6, 600); RotateReset();
@@ -585,7 +588,7 @@ public abstract class AutonomousMain extends RobotHardware {
         StrafeWithEncoders(0, 0.5, 200); RotateReset();
         RotateRelative(90);
         sleep(100);
-        StrafeToObstacle(42); //TODO
+        StrafeToObstacle(45); //TODO
 
         //Merg pana la tava si o apuc
         StrafeWithEncoders(-90, 0.5, 1000); RotateReset();
@@ -622,31 +625,31 @@ public abstract class AutonomousMain extends RobotHardware {
         StrafeWithEncoders(0, 0.5, 200); RotateReset();
         RotateRelative(-90);
         sleep(100);
-        StrafeToObstacle(30); //TODO
+        StrafeToObstacle(20); //TODO
 
         //Ma rotesc ca sa am clestele orientat spre tava si merg pana la tava si o apuc
-        RotateRelative(180);
+        RotateRelative(180); sleep(100); RotateReset();
         StrafeWithEncoders(-90, 0.5, 1300); RotateReset();
         ServoBrat.setPosition(0.1);
         sleep(200);
 
         //Trag tava si ma desprind si ma rotesc inapoi
-        StrafeWithEncoders(90, 0.8, 2000);
+        StrafeWithEncoders(90, 0.8, 2500);
         ServoBrat.setPosition(1); RotateReset();
         sleep(200);
         RotateRelative(180);
 
         //Ocoleste tava
         StrafeWithEncoders(180, 0.5, 500); RotateReset();
-        StrafeToObstacle(90);
+        StrafeToObstacle(100);
         StrafeWithEncoders(90 , 0.5 , 1000); RotateReset();
         StrafeWithEncoders(0 , 0.5 , 100); RotateReset();
         StrafeWithEncoders(90 , 0.5 , 1200); RotateReset();
-        StrafeToObstacle(30);
-        StrafeWithEncoders(-90 , 0.8 , 2000); RotateReset();
+        StrafeToObstacle(40);
+        StrafeWithEncoders(-90 , 0.8 , 2200); RotateReset();
 
         //Parcheaza
-        StrafeUntilColor(0.5, -180, ColorUnderneath, 9 ,10);
+        StrafeUntilColor(0.5, -180, ColorUnderneath, 9 ,11, 5, 300);
 
 
         //dupa ce trag tava, o ocolesc, intai la dreapta
