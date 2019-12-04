@@ -44,8 +44,10 @@ public abstract class RobotHardware extends LinearOpMode {
     //Global Variables
     Orientation lastAngles = new Orientation();
     double globalAngle;
+    protected double globalTargetAngle = 0;
     static double FRBLResult;
     static double FLBRResult;
+    double valAlphaMIN = 3;
 
 
     public void initialize(){
@@ -245,6 +247,7 @@ public abstract class RobotHardware extends LinearOpMode {
         lastAngles = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         globalAngle = 0;
+        globalTargetAngle = 0;
     }
 
     //Function that calculates mecanum vectors based on XY coordinates

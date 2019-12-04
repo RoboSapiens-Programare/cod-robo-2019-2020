@@ -21,7 +21,6 @@ public abstract class AutonomousMain extends RobotHardware {
         CalibrateGyro();
     }
 
-
     //SENSOR INPUT
     //Check valid input
     protected boolean CheckHasLightInput(ModernRoboticsI2cColorSensor SensorToQuestion){
@@ -181,8 +180,6 @@ public abstract class AutonomousMain extends RobotHardware {
 
         }
 
-        ResetAngle();
-
         StopWheels();
     }
 
@@ -287,56 +284,89 @@ public abstract class AutonomousMain extends RobotHardware {
         }
     }
 
-    protected void StrafeUntilColor(double speed, double angle, ModernRoboticsI2cColorSensor SensorToQuestion, int HUE_A , int HUE_B){
+    protected void StrafeUntilColor(double speed, double angle, ModernRoboticsI2cColorSensor SensorToQuestion, int HUE_A , int HUE_B , boolean ResetAngle){
         StrafeWithAngle(angle, 0, speed);
 
         int AngleIterator = 0;
+        int AngleReset = 60;
 
         while(!CheckForColor(SensorToQuestion, HUE_A , HUE_B) && opModeIsActive()){
             telemetry.addData("Color Read", SensorToQuestion.read8(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER));
             telemetry.update();
-            //StrafeWithAngle(angle, 0, speed);
-            //AngleIterator++;
-            if(AngleIterator >= 60) {
-                RotateReset();
-                StrafeWithAngle(angle, 0, speed);
-                AngleIterator = 0;
+
+            if(ResetAngle){
+                AngleIterator++;
+                if(AngleIterator >= AngleReset) {
+                    RotateReset();
+                    StrafeWithAngle(angle, 0, speed);
+                    AngleIterator = 0;
+                }
             }
             idle();
         }
         StopWheels();
     }
-    protected void StrafeUntilColor(double speed, double angle, ModernRoboticsI2cColorSensor SensorToQuestion, int HUE_A , int HUE_B , int MIN , int MAX){
-        StrafeWithAngle(angle, 0, speed);
 
-
-        while(!CheckForColor(SensorToQuestion, HUE_A , HUE_B , MIN , MAX) && opModeIsActive()){
-            telemetry.addData("Color Read", SensorToQuestion.read8(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER));
-            telemetry.update();
-            idle();
-        }
-        StopWheels();
-    }
-    protected void StrafeUntilColor(double speed, double angle, ModernRoboticsI2cColorSensor SensorToQuestion, int HUE_A , int HUE_B , int MIN , int MAX , int AngleReset){
+    protected void StrafeUntilColor(double speed, double angle, ModernRoboticsI2cColorSensor SensorToQuestion, int HUE_A , int HUE_B , int MIN , int MAX , boolean ResetAngle){
         StrafeWithAngle(angle, 0, speed);
 
         int AngleIterator = 0;
+        int AngleReset = 60;
 
         while(!CheckForColor(SensorToQuestion, HUE_A , HUE_B , MIN , MAX) && opModeIsActive()){
             telemetry.addData("Color Read", SensorToQuestion.read8(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER));
             telemetry.update();
-            AngleIterator++;
-            if(AngleIterator >= AngleReset) {
-                RotateReset();
-                StrafeWithAngle(angle, 0, speed);
-                AngleIterator = 0;
+
+            if(ResetAngle){
+                AngleIterator++;
+                if(AngleIterator >= AngleReset) {
+                    RotateReset();
+                    StrafeWithAngle(angle, 0, speed);
+                    AngleIterator = 0;
+                }
             }
             idle();
         }
         StopWheels();
     }
 
+    protected void ResetAlpha(ModernRoboticsI2cColorSensor SensorToQuestion){
+        StrafeWithAngle(-90, 0, 0.17);
+        while (SensorToQuestion.alpha() < valAlphaMIN){
+            idle();
+        }
+        StopWheels();
+    }
+
+    protected void StrafeUntilColorAlpha(double speed, double angle, ModernRoboticsI2cColorSensor SensorToQuestion, int HUE_A , int HUE_B , int MIN , int MAX){
+        StrafeWithAngle(angle, 0, speed);
+
+        while(!CheckForColor(SensorToQuestion, HUE_A , HUE_B , MIN , MAX) && opModeIsActive()){
+            if (SensorToQuestion.alpha() < valAlphaMIN){
+                ResetAngle();
+                ResetAlpha(SensorToQuestion);
+                StrafeWithAngle(angle, 0, speed);
+            }
+            telemetry.addData("Color Read", SensorToQuestion.read8(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER));
+            telemetry.update();
+            idle();
+        }
+        StopWheels();
+    }
+
+    protected void ResetGlobalTargetAngle(){
+        globalTargetAngle %= 360;
+        if (globalTargetAngle > 180){
+            globalTargetAngle -= 360;
+        }
+        if (globalTargetAngle < -180){
+            globalTargetAngle += 360;
+        }
+    }
+
     protected void RotateRelative(double Angle){
+
+        globalTargetAngle += Angle; ResetGlobalTargetAngle();
 
         double deadzone_big = 15;
         double deadzone_small = 5;
@@ -350,52 +380,49 @@ public abstract class AutonomousMain extends RobotHardware {
         SetWheelsPowerTank(-speed , speed);
 
         while (opModeIsActive() && Math.abs(TargetAngle - GetAngle()) > deadzone_big) {
-            telemetry.addData("sunt in modul normal", TargetAngle);
-            telemetry.addData("m-am rotit pana la ", GetAngle());
-            telemetry.update();
             idle();
         }
 
         SetWheelsPowerTank(-speed/2 , speed/2);
 
         while (opModeIsActive() && Math.abs(TargetAngle - GetAngle()) > deadzone_small) {
-            telemetry.addData("sunt in modul incet", " ");
-            telemetry.addData("m-am rotit pana la ", GetAngle());
-            telemetry.update();
             idle();
         }
 
         SetWheelsPowerTank(0,0);
-
-        ResetAngle();
     }
 
-    protected void RotateReset(){
-        double deadzone_big = 15;
-        double deadzone_small = 3;
-        double speed = 0.4;
+    protected void RotateRelative(double Angle , double deadzone_big , double deadzone_small , double speed){
 
-        if (-GetAngle() < 0)
+        if (Angle < 0)
             speed = - speed;
+
+        double TargetAngle = GetAngle() + Angle;
 
         SetWheelsPowerTank(-speed , speed);
 
-        while (opModeIsActive() && Math.abs(-GetAngle()) > deadzone_big) {
-            telemetry.addData("m-am rotit pana la ", GetAngle());
-            telemetry.update();
+        while (opModeIsActive() && Math.abs(TargetAngle - GetAngle()) > deadzone_big) {
             idle();
         }
 
         SetWheelsPowerTank(-speed/2 , speed/2);
 
-        while (opModeIsActive() && Math.abs(-GetAngle()) > deadzone_small) {
-            telemetry.addData("sunt in modul incet", " ");
-            telemetry.addData("m-am rotit pana la ", GetAngle());
-            telemetry.update();
+        while (opModeIsActive() && Math.abs(TargetAngle - GetAngle()) > deadzone_small) {
             idle();
         }
 
-        StopWheels();
+        SetWheelsPowerTank(0,0);
+    }
+
+    protected void RotateReset(){
+
+        double ChangeAngle = globalTargetAngle - GetAngle();
+        telemetry.addData("ChangeAngle" , ChangeAngle);
+        telemetry.addData("globalTargetAngle" , globalTargetAngle);
+        telemetry.addData("angle" , GetAngle());
+        telemetry.update();
+        RotateRelative(ChangeAngle , 10 , 3 , 0.3);
+
     }
 
     protected void AutonomousSkyStoneBlue(){
@@ -406,13 +433,13 @@ public abstract class AutonomousMain extends RobotHardware {
 
         //Mergem pana gasim ceva de culoarea galbena
         RotateRelative(180);
-        StrafeWithEncoders(180, 0.3, 150); sleep(100); ResetAngle();
+        StrafeWithEncoders(180, 0.3, 150); sleep(100);
         StrafeWithEncoders(-90, 0.4, 350); sleep(100);
-        StrafeUntilColor(0.17, -90, ColorSide, 1 , 16);
+        StrafeUntilColor(0.17, -90, ColorSide, 1 , 16 , false);
         sleep(100);
 
         //Incepem sa le luam in ordine pana ajungem la unul negru
-        StrafeUntilColor(0.2, 0, ColorSide, 9 , 16 , 0 , 7); RotateReset();
+        StrafeUntilColorAlpha(0.2, 0, ColorSide, 9 , 16 , 0 , 7); RotateReset();
         //StrafeWithEncoders(0, 0.25, 30); RotateReset();
 
         //Dam bratul in jos
@@ -421,7 +448,7 @@ public abstract class AutonomousMain extends RobotHardware {
 
         //Tragem ala in building zone
         StrafeWithEncoders(90, 0.7, 900); RotateReset();
-        StrafeUntilColor(0.5, 0, ColorUnderneath, 2 , 4 , 1 , 300 , 20); RotateReset();
+        StrafeUntilColor(0.5, 0, ColorUnderneath, 2 , 4 , 1 , 300 , true); RotateReset();
         StrafeWithEncoders(0, 0.5, 300);
 
         //Ridicam bratul
@@ -477,11 +504,11 @@ public abstract class AutonomousMain extends RobotHardware {
 
         //Mergem pana gasim ceva de culoarea galbena
         StrafeWithEncoders(-90, 0.4, 200); sleep(100);
-        StrafeUntilColor(0.2, -90, ColorSide, 1 , 16); RotateReset();
+        StrafeUntilColor(0.2, -90, ColorSide, 1 , 16 , false); RotateReset();
         sleep(200);
 
         //Incepem sa le luam in ordine pana ajungem la unul negru
-        StrafeUntilColor(0.25, 180, ColorSide, 9 , 16 , 0 , 5);
+        StrafeUntilColorAlpha(0.25, 180, ColorSide, 9 , 16 , 0 , 5);
         StrafeWithEncoders(0, 0.2, 20); RotateReset();
 
         sleep(200);
@@ -493,7 +520,7 @@ public abstract class AutonomousMain extends RobotHardware {
 
         //Tragem ala in building zone
         StrafeWithEncoders(90, 0.7, 600); RotateReset();
-        StrafeUntilColor(0.4, 180, ColorUnderneath, 9 , 11 , 5 , 300 , 20); RotateReset();
+        StrafeUntilColor(0.4, 180, ColorUnderneath, 9 , 11 , 5 , 300 , true); RotateReset();
 
         //Ridicam bratul
         RotateRelative(-90);
@@ -506,7 +533,7 @@ public abstract class AutonomousMain extends RobotHardware {
 
 
         //Mergem pana gasim ceva de culoarea galbena
-        StrafeUntilColor(0.2, -90, ColorSide, 1 , 16); RotateReset();
+        StrafeUntilColor(0.2, -90, ColorSide, 1 , 16 , false); RotateReset();
 
         sleep(200);
 
@@ -534,14 +561,14 @@ public abstract class AutonomousMain extends RobotHardware {
 
         //Tragem ala in building zone
         StrafeWithEncoders(90, 0.6, 600); RotateReset();
-        StrafeUntilColor(0.5, 180, ColorUnderneath, 9 , 11 , 5 , 300 , 20); RotateReset();
+        StrafeUntilColor(0.5, 180, ColorUnderneath, 9 , 11 , 5 , 300 , true); RotateReset();
 
         //Ridicam bratul
         RotateRelative(-90);
         StrafeWithEncoders(-90, 0.7, 800);
         sleep(100);
         ServoBrat.setPosition(1);
-        StrafeUntilColor(0.5, 90, ColorUnderneath, 9 , 11 , 5 , 300); RotateReset();
+        StrafeUntilColor(0.5, 90, ColorUnderneath, 9 , 11 , 5 , 300 , true); RotateReset();
 
         /*//Ne dam mai in drepta
         StrafeWithEncoders(-90, 0.6, 600); RotateReset();
@@ -588,7 +615,7 @@ public abstract class AutonomousMain extends RobotHardware {
         StrafeWithEncoders(0, 0.5, 200); RotateReset();
         RotateRelative(90);
         sleep(100);
-        StrafeToObstacle(45); //TODO
+        StrafeToObstacle(55); //TODO
 
         //Merg pana la tava si o apuc
         StrafeWithEncoders(-90, 0.5, 1000); RotateReset();
@@ -596,18 +623,20 @@ public abstract class AutonomousMain extends RobotHardware {
         sleep(200);
 
         //Trag tava si ma desprind
-        StrafeWithEncoders(90, 0.6, 3000);
+        StrafeWithEncoders(70, 0.6, 3000);
         ServoBrat.setPosition(1); RotateReset();
         sleep(200);
 
         //Ocolesc tava
         StrafeToObstacle(100);
-        StrafeWithEncoders(-90 , 0.5 , 2200); RotateReset();
+        StrafeWithEncoders(-90 , 0.5 , 1200); RotateReset();
+        StrafeWithEncoders(0 , 0.5 , 200); RotateReset();
+        StrafeWithEncoders(-90 , 0.5 , 1200); RotateReset();
         StrafeToObstacle(30);
         StrafeWithEncoders(90 , 0.8 , 2500); RotateReset();
 
         //Parchez
-        StrafeUntilColor(0.5, -180, ColorUnderneath, 2 , 4);
+        StrafeUntilColor(0.5, -180, ColorUnderneath, 2 , 4 , true);
 
 
         //dupa ce trag tava, o ocolesc, intai la dreapta
@@ -649,7 +678,7 @@ public abstract class AutonomousMain extends RobotHardware {
         StrafeWithEncoders(-90 , 0.8 , 2200); RotateReset();
 
         //Parcheaza
-        StrafeUntilColor(0.5, -180, ColorUnderneath, 9 ,11, 5, 300);
+        StrafeUntilColor(0.5, -180, ColorUnderneath, 9 ,11, 5, 300 , true);
 
 
         //dupa ce trag tava, o ocolesc, intai la dreapta
