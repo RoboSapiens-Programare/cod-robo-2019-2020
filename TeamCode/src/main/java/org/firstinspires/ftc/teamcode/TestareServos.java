@@ -21,8 +21,8 @@ public final class TestareServos extends LinearOpMode {
         servo1 = hardwareMap.servo.get("servo1");
         servo2 = hardwareMap.servo.get("servo2");
         servo3 = hardwareMap.servo.get("servo3");
-        servo1.setPosition(0);
-        servo2.setPosition(0);
+        servo1.setPosition(0.7);
+        servo2.setPosition(0.7);
         servo3.setPosition(0);
 
         crservo4 = hardwareMap.crservo.get("crservo4");
@@ -35,22 +35,28 @@ public final class TestareServos extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()){
-            if(gamepad1.left_bumper){
+            /*if(gamepad1.left_bumper){
                 bForward = false;
             }
             else if(gamepad1.right_bumper){
                 bForward = true;
-            }
+            }*/
 
             if(gamepad1.dpad_up){
-                servo1.setPosition(bForward? 1 : 0);
+                servo1.setPosition(0.2);
+                servo2.setPosition(0.2);
             }
-            if(gamepad1.dpad_left){
+            /*if(gamepad1.dpad_left){
                 servo2.setPosition(bForward? 1 : 0);
             }
             if(gamepad1.dpad_right){
                 servo3.setPosition(bForward? 1 : 0);
+            }*/
+            if(gamepad1.dpad_down){
+                servo1.setPosition(0.8);
+                servo2.setPosition(0.8);
             }
+
 
             if(gamepad1.a){
                 crservo4.setPower(bForward? 1 : -1);
