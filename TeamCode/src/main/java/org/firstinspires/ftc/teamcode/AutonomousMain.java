@@ -311,7 +311,7 @@ public abstract class AutonomousMain extends RobotHardware {
         StrafeWithAngle(angle, 0, speed);
 
         int AngleIterator = 0;
-        int AngleReset = 60;
+        int AngleReset = 30;
 
         while(!CheckForColor(SensorToQuestion, HUE_A , HUE_B , MIN , MAX) && opModeIsActive()){
             telemetry.addData("Color Read", SensorToQuestion.read8(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER));
@@ -345,6 +345,7 @@ public abstract class AutonomousMain extends RobotHardware {
             if (SensorToQuestion.alpha() < valAlphaMIN){
                 ResetAngle();
                 ResetAlpha(SensorToQuestion);
+                sleep(50);
                 StrafeWithAngle(angle, 0, speed);
             }
             telemetry.addData("Color Read", SensorToQuestion.read8(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER));
