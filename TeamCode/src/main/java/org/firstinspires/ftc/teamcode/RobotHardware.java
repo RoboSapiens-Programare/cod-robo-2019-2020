@@ -47,7 +47,7 @@ public abstract class RobotHardware extends LinearOpMode {
     protected double globalTargetAngle = 0;
     static double FRBLResult;
     static double FLBRResult;
-    double valAlphaMIN = 3;
+    double valAlphaMIN = 5;
 
 
     public void initialize(){

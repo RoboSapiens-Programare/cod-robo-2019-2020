@@ -354,8 +354,9 @@ public abstract class AutonomousMain extends RobotHardware {
         StopWheels();
     }
 
-    protected void ResetGlobalTargetAngle(){
-        globalTargetAngle %= 360;
+    protected void AddToGlobalTargetAngle(double addAngle){
+        //globalTargetAngle %= 360;
+        globalTargetAngle += addAngle;
         if (globalTargetAngle > 180){
             globalTargetAngle -= 360;
         }
@@ -366,7 +367,7 @@ public abstract class AutonomousMain extends RobotHardware {
 
     protected void RotateRelative(double Angle){
 
-        globalTargetAngle += Angle; ResetGlobalTargetAngle();
+        AddToGlobalTargetAngle(Angle);
 
         double deadzone_big = 15;
         double deadzone_small = 5;
@@ -421,7 +422,7 @@ public abstract class AutonomousMain extends RobotHardware {
         telemetry.addData("globalTargetAngle" , globalTargetAngle);
         telemetry.addData("angle" , GetAngle());
         telemetry.update();
-        RotateRelative(ChangeAngle , 10 , 3 , 0.3);
+        RotateRelative(ChangeAngle , 7 , 2 , 0.3);
 
     }
 
@@ -434,13 +435,13 @@ public abstract class AutonomousMain extends RobotHardware {
         //Mergem pana gasim ceva de culoarea galbena
         RotateRelative(180);
         StrafeWithEncoders(180, 0.3, 150); sleep(100);
-        StrafeWithEncoders(-90, 0.4, 350); sleep(100);
-        StrafeUntilColor(0.17, -90, ColorSide, 1 , 16 , false);
+        StrafeWithEncoders(-90, 0.4, 350); sleep(100); RotateReset();
+        StrafeUntilColor(0.17, -90, ColorSide, 1 , 16 , false); RotateReset();
         sleep(100);
 
         //Incepem sa le luam in ordine pana ajungem la unul negru
-        StrafeUntilColorAlpha(0.2, 0, ColorSide, 9 , 16 , 0 , 7); RotateReset();
-        //StrafeWithEncoders(0, 0.25, 30); RotateReset();
+        StrafeUntilColorAlpha(0.25, 0, ColorSide, 9 , 16 , 0 , 5);
+
 
         //Dam bratul in jos
         ServoBrat.setPosition(0.1);
@@ -509,7 +510,7 @@ public abstract class AutonomousMain extends RobotHardware {
 
         //Incepem sa le luam in ordine pana ajungem la unul negru
         StrafeUntilColorAlpha(0.25, 180, ColorSide, 9 , 16 , 0 , 5);
-        StrafeWithEncoders(0, 0.2, 20); RotateReset();
+        //StrafeWithEncoders(0, 0.2, 20); RotateReset();
 
         sleep(200);
 
@@ -529,7 +530,7 @@ public abstract class AutonomousMain extends RobotHardware {
         ServoBrat.setPosition(1);
         RotateRelative(90);
 
-        StrafeToObstacle(86); RotateReset();
+        StrafeToObstacle(93); RotateReset();
 
 
         //Mergem pana gasim ceva de culoarea galbena
