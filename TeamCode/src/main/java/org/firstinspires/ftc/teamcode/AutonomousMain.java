@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.lang.annotation.Target;
+
 import static java.lang.Math.max;
 
 public abstract class AutonomousMain extends RobotHardware {
@@ -343,7 +345,7 @@ public abstract class AutonomousMain extends RobotHardware {
 
         while(!CheckForColor(SensorToQuestion, HUE_A , HUE_B , MIN , MAX) && opModeIsActive()){
             if (SensorToQuestion.alpha() < valAlphaMIN){
-                ResetAngle();
+                RotateReset();
                 ResetAlpha(SensorToQuestion);
                 sleep(50);
                 StrafeWithAngle(angle, 0, speed);
@@ -356,8 +358,8 @@ public abstract class AutonomousMain extends RobotHardware {
     }
 
     protected void AddToGlobalTargetAngle(double addAngle){
-        //globalTargetAngle %= 360;
         globalTargetAngle += addAngle;
+        globalTargetAngle %= 360;
         if (globalTargetAngle > 180){
             globalTargetAngle -= 360;
         }
@@ -377,17 +379,19 @@ public abstract class AutonomousMain extends RobotHardware {
         if (Angle < 0)
             speed = - speed;
 
-        double TargetAngle = GetAngle() + Angle;
+        //double TargetAngle = GetAngle() + Angle;
+        telemetry.addData("Target Angle Rotate Relative", globalTargetAngle);
+        telemetry.update();
 
         SetWheelsPowerTank(-speed , speed);
 
-        while (opModeIsActive() && Math.abs(TargetAngle - GetAngle()) > deadzone_big) {
+        while (opModeIsActive() && Math.abs(globalTargetAngle - GetAngle()) > deadzone_big) {
             idle();
         }
 
         SetWheelsPowerTank(-speed/2 , speed/2);
 
-        while (opModeIsActive() && Math.abs(TargetAngle - GetAngle()) > deadzone_small) {
+        while (opModeIsActive() && Math.abs(globalTargetAngle - GetAngle()) > deadzone_small) {
             idle();
         }
 
@@ -396,20 +400,22 @@ public abstract class AutonomousMain extends RobotHardware {
 
     protected void RotateRelative(double Angle , double deadzone_big , double deadzone_small , double speed){
 
+        AddToGlobalTargetAngle(Angle);
+
         if (Angle < 0)
             speed = - speed;
 
-        double TargetAngle = GetAngle() + Angle;
+        //double TargetAngle = GetAngle() + Angle;
 
         SetWheelsPowerTank(-speed , speed);
 
-        while (opModeIsActive() && Math.abs(TargetAngle - GetAngle()) > deadzone_big) {
+        while (opModeIsActive() && Math.abs(globalTargetAngle - GetAngle()) > deadzone_big) {
             idle();
         }
 
         SetWheelsPowerTank(-speed/2 , speed/2);
 
-        while (opModeIsActive() && Math.abs(TargetAngle - GetAngle()) > deadzone_small) {
+        while (opModeIsActive() && Math.abs(globalTargetAngle - GetAngle()) > deadzone_small) {
             idle();
         }
 
@@ -425,6 +431,17 @@ public abstract class AutonomousMain extends RobotHardware {
         telemetry.update();
         RotateRelative(ChangeAngle , 7 , 2 , 0.3);
 
+    }
+
+    protected void BratTava (boolean ridicare) {
+        if (ridicare) {
+            ServoTavaLeft.setPosition(1);
+            ServoTavaRight.setPosition(0.1);
+        }
+        else {
+            ServoTavaLeft.setPosition(0.1);
+            ServoTavaRight.setPosition(1);
+        }
     }
 
     protected void AutonomousSkyStoneBlue(){
@@ -613,32 +630,49 @@ public abstract class AutonomousMain extends RobotHardware {
     protected void AutonomousImpingeTavaBlue(){
         // EXPERIMENTAL
 
-        //Merg pana la 40 de cm de perete
+        //Merg pana la 40 de cm de perete si ma rotesc
         StrafeWithEncoders(0, 0.5, 200); RotateReset();
         RotateRelative(90);
         sleep(100);
-        StrafeToObstacle(55); //TODO
+        StrafeToObstacle(50); //TODO
+        RotateReset();
+        RotateRelative(180);
 
         //Merg pana la tava si o apuc
-        StrafeWithEncoders(-90, 0.5, 1000); RotateReset();
-        ServoBrat.setPosition(0.1);
-        sleep(200);
+        StrafeWithEncoders(90, 0.7, 700); RotateReset();
+        StrafeWithEncoders(90, 0.2, 300); //RotateReset();
+        BratTava(false);
+        sleep( 700);
+        StrafeWithEncoders(-90, 0.2, 300); //RotateReset();
 
-        //Trag tava si ma desprind
-        StrafeWithEncoders(70, 0.6, 3000);
-        ServoBrat.setPosition(1); RotateReset();
-        sleep(200);
+//        //Trag tava si ma desprind
+//        StrafeWithEncoders(70, 0.6, 3000);
+//        ServoBrat.setPosition(1); RotateReset();
+//        sleep(200);
 
-        //Ocolesc tava
-        StrafeToObstacle(100);
-        StrafeWithEncoders(-90 , 0.5 , 1200); RotateReset();
-        StrafeWithEncoders(0 , 0.5 , 200); RotateReset();
-        StrafeWithEncoders(-90 , 0.5 , 1200); RotateReset();
-        StrafeToObstacle(30);
-        StrafeWithEncoders(90 , 0.8 , 2500); RotateReset();
+
+//        //Ocolesc tava
+//        StrafeToObstacle(100);
+//        StrafeWithEncoders(-90 , 0.5 , 1200); RotateReset();
+//        StrafeWithEncoders(0 , 0.5 , 200); RotateReset();
+//        StrafeWithEncoders(-90 , 0.5 , 1200); RotateReset();
+//        StrafeToObstacle(30);
+//        StrafeWithEncoders(90 , 0.8 , 2500); RotateReset();
+
+        StrafeWithAngle(-90, -0.7, 0.9);
+        while (GetAngle() < globalTargetAngle + 90) {
+            idle();
+        }
+        StopWheels();
+
+        AddToGlobalTargetAngle(90);
+
+        BratTava( true);
+
+        StrafeWithEncoders(90, 0.7, 3000);
 
         //Parchez
-        StrafeUntilColor(0.5, -180, ColorUnderneath, 2 , 4 , true);
+        StrafeUntilColor(0.5, -90, ColorUnderneath, 2 , 4 , false);
 
 
         //dupa ce trag tava, o ocolesc, intai la dreapta
@@ -650,45 +684,32 @@ public abstract class AutonomousMain extends RobotHardware {
     }
 
     protected void AutonomousImpingeTavaRed(){
-        // EXPERIMENTAL
-
-        //Mers pana la 40 de cm de perete
-        StrafeWithEncoders(0, 0.5, 200); RotateReset();
+        StrafeWithEncoders(0, 0.5, 400); RotateReset();
         RotateRelative(-90);
-        sleep(100);
-        StrafeToObstacle(20); //TODO
+        StrafeToObstacle(45);
 
-        //Ma rotesc ca sa am clestele orientat spre tava si merg pana la tava si o apuc
-        RotateRelative(180); sleep(100); RotateReset();
-        StrafeWithEncoders(-90, 0.5, 1300); RotateReset();
-        ServoBrat.setPosition(0.1);
-        sleep(200);
+        StrafeWithEncoders(90, 0.7, 700); RotateReset();
+        StrafeWithEncoders(90, 0.2, 300); //RotateReset();
+        BratTava(false);
+        sleep( 700);
+        StrafeWithEncoders(-90, 0.2, 300); //RotateReset();
 
-        //Trag tava si ma desprind si ma rotesc inapoi
-        StrafeWithEncoders(90, 0.8, 2500);
-        ServoBrat.setPosition(1); RotateReset();
-        sleep(200);
-        RotateRelative(180);
+        StrafeWithAngle(0, 0.9, 0.9, 0.9);
+        AddToGlobalTargetAngle(-90);
 
-        //Ocoleste tava
-        StrafeWithEncoders(180, 0.5, 500); RotateReset();
-        StrafeToObstacle(100);
-        StrafeWithEncoders(90 , 0.5 , 1000); RotateReset();
-        StrafeWithEncoders(0 , 0.5 , 100); RotateReset();
-        StrafeWithEncoders(90 , 0.5 , 1200); RotateReset();
-        StrafeToObstacle(40);
-        StrafeWithEncoders(-90 , 0.8 , 2200); RotateReset();
-
-        //Parcheaza
-        StrafeUntilColor(0.5, -180, ColorUnderneath, 9 ,11, 5, 300 , true);
+        while (opModeIsActive() && GetAngle() > globalTargetAngle) {
+            idle();
+        }
+        StopWheels();
 
 
-        //dupa ce trag tava, o ocolesc, intai la dreapta
-        //apoi in fata, apoi la stanga, apoi in spate
+        BratTava( true);
 
-        //dupa ce am impins tava, ma duc in dreapta
-        // ma duc in spate pana la zid (senzori si poate ne rotim 180)
-        //dupa mergem la dreapta pana la linie
+        StrafeWithEncoders(90, 0.7, 3000);
+
+        //Parchez
+        StrafeUntilColor(0.5, -90, ColorUnderneath, 9 , 10 , 5, 300, false);
+
     }
 
 

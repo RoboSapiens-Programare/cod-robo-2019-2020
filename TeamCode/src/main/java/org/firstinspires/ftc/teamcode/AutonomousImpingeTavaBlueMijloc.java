@@ -14,7 +14,7 @@ public final class AutonomousImpingeTavaBlueMijloc extends AutonomousMain {
 
         AutonomousImpingeTavaBlue();
 
-        StrafeWithEncoders(-90, 0.4, 600); RotateReset();
+        StrafeWithEncoders(0, 0.4, 600); RotateReset();
 
     }
 }

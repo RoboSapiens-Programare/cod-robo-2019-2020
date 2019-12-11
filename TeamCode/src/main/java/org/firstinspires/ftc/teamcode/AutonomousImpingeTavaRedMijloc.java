@@ -13,6 +13,6 @@ public final class AutonomousImpingeTavaRedMijloc extends AutonomousMain {
 
         AutonomousImpingeTavaRed();
 
-        StrafeWithEncoders(90, 0.4, 600); RotateReset();
+        StrafeWithEncoders(180, 0.4, 600); RotateReset();
     }
 }

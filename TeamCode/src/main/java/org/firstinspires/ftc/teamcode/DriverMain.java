@@ -51,10 +51,12 @@ public final class DriverMain extends RobotHardware {
             ServoZAxis.setPosition(0.5);
         }
 
-        if (Math.abs(gamepad2.left_stick_y) > 0.1) {
-            ServoYAxis.setPower(gamepad2.left_stick_y);
-        } else {
-            ServoYAxis.setPower(0);
+        if (gamepad2.dpad_up){
+            ServoTavaLeft.setPosition(1);
+            ServoTavaRight.setPosition(0.1);
+        } else if (gamepad2.dpad_down){
+            ServoTavaLeft.setPosition(0.1);
+            ServoTavaRight.setPosition(1);
         }
 
 

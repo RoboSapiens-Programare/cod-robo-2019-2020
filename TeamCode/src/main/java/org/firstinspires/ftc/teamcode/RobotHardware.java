@@ -27,10 +27,11 @@ public abstract class RobotHardware extends LinearOpMode {
 
     //Servos
     protected Servo ServoBrat = null;
-    protected CRServo ServoYAxis = null;
     protected Servo ServoZAxis = null;
     protected Servo ServoClampLeft = null;
     protected Servo ServoClampRight = null;
+    protected Servo ServoTavaRight = null;
+    protected Servo ServoTavaLeft = null;
 
     //Sensors
     protected ModernRoboticsI2cRangeSensor RangeL = null;
@@ -83,9 +84,6 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorBratColectare.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         MotorBratColectare.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        ServoYAxis = hardwareMap.crservo.get("ServoYAxis");
-        ServoYAxis.setPower(0.0);
-
 
         ServoZAxis = hardwareMap.servo.get("ServoZAxis");
         ServoZAxis.setPosition(0.5);
@@ -95,6 +93,12 @@ public abstract class RobotHardware extends LinearOpMode {
 
         ServoClampRight = hardwareMap.servo.get("ServoClampRight");
         ServoClampRight.setPosition(0.4);
+
+        ServoTavaRight = hardwareMap.servo.get("ServoTavaRight");
+        ServoTavaRight.setPosition(0.1);
+
+        ServoTavaLeft = hardwareMap.servo.get("ServoTavaLeft");
+        ServoTavaLeft.setPosition(1);
 
 
         RangeL = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "RangeL");
@@ -228,14 +232,13 @@ public abstract class RobotHardware extends LinearOpMode {
 
         Orientation angles = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+        globalAngle += angles.firstAngle - lastAngles.firstAngle;
+        globalAngle %= 360;
 
-        if (deltaAngle < -180)
-            deltaAngle += 360;
-        else if (deltaAngle > 180)
-            deltaAngle -= 360;
-
-        globalAngle += deltaAngle;
+        if (globalAngle < -180)
+            globalAngle += 360;
+        else if (globalAngle > 180)
+            globalAngle -= 360;
 
         lastAngles = angles;
 

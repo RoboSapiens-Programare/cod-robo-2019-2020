@@ -13,6 +13,6 @@ public final class AutonomousImpingeTavaRedPerete extends AutonomousMain {
 
         AutonomousImpingeTavaRed();
 
-        StrafeWithEncoders(-90, 0.4, 600); RotateReset();
+        StrafeWithEncoders(0, 0.4, 600); RotateReset();
     }
 }
