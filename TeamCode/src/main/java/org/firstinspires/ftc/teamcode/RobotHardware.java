@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -24,7 +26,7 @@ public abstract class RobotHardware extends LinearOpMode {
     protected DcMotor MotorBR = null;
     protected DcMotor MotorBL = null;
     protected DcMotor MotorBratColectare = null;
-
+    
     //Servos
     protected Servo ServoBrat = null;
     protected Servo ServoZAxis = null;
@@ -271,6 +273,7 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         MotorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         MotorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
 }
