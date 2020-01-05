@@ -26,7 +26,11 @@ public abstract class RobotHardware extends LinearOpMode {
     protected DcMotor MotorBR = null;
     protected DcMotor MotorBL = null;
     protected DcMotor MotorBratColectare = null;
-    
+
+    protected DcMotor MotorVerticalLeft;
+    protected DcMotor MotorVerticalRight;
+    protected DcMotor MotorHorizontal;
+
     //Servos
     protected Servo ServoBrat = null;
     protected Servo ServoZAxis = null;
@@ -54,6 +58,7 @@ public abstract class RobotHardware extends LinearOpMode {
 
 
     public void initialize(){
+        //Motoare roti
         MotorFR = hardwareMap.dcMotor.get("MotorFR");
         MotorFL = hardwareMap.dcMotor.get("MotorFL");
         MotorBR = hardwareMap.dcMotor.get("MotorBR");
@@ -78,6 +83,23 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         MotorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         MotorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Motoare Odometrie
+        MotorVerticalLeft = hardwareMap.dcMotor.get("a");
+        MotorVerticalRight = hardwareMap.dcMotor.get("b");
+        MotorHorizontal = hardwareMap.dcMotor.get("c");
+
+        MotorVerticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MotorVerticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MotorHorizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        MotorVerticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        MotorVerticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        MotorHorizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        MotorVerticalLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        MotorVerticalRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        MotorHorizontal.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Brat Colectare
         MotorBratColectare = hardwareMap.dcMotor.get("MotorBrat");
@@ -141,7 +163,7 @@ public abstract class RobotHardware extends LinearOpMode {
         MotorBL.setPower(speedL);
     }
 
-    protected void SetWheelsPowerMeccanum(double speedFRBL, double speedFLBR){
+    protected void SetWheelsPowerMecanum(double speedFRBL, double speedFLBR){
         MotorFR.setPower(speedFRBL);
         MotorBR.setPower(speedFLBR);
         MotorFL.setPower(speedFRBL);
