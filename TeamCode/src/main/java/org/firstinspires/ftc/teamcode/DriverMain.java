@@ -18,6 +18,7 @@ public final class DriverMain extends RobotHardware {
         while(opModeIsActive()){
             telemetry.addData("EncoderL citeste: ", EncoderL.getCurrentPosition());
             telemetry.addData("EncoderR citeste: ", EncoderR.getCurrentPosition());
+            telemetry.addData("EncoderUP citeste: ", EncoderUP.getCurrentPosition());
             telemetry.update();
         }
     }
