@@ -12,7 +12,7 @@ public abstract class RobotHardware extends LinearOpMode {
     public void initialize(){
         EncoderL = hardwareMap.dcMotor.get("EncoderL");
         EncoderR = hardwareMap.dcMotor.get("EncoderR");
-        EncoderUP = hardwareMap.dcMotor.get("EncoderR");
+        EncoderUP = hardwareMap.dcMotor.get("EncoderUP");
 
         EncoderL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         EncoderR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
