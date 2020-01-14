@@ -9,16 +9,16 @@ import java.util.logging.Handler;
 
 public class MainActivity extends LinearOpMode {
 
-    ModernRoboticsI2cGyro gyro = null;
+    ModernRoboticsI2cGyro realGyro = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        gyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
+        realGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
 
         waitForStart();
         while (opModeIsActive()) {
-            BrainThread brainThread = new BrainThread();
+            BrainThread brainThread = new BrainThread(realGyro);
 
         }
 

@@ -1,6 +1,7 @@
 package Threads;
 
 import android.os.HandlerThread;
+import android.os.Message;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 
@@ -17,6 +18,19 @@ public class QueryThread extends HandlerThread {
         super("HandlerThread");
         this.gyro = gyro;
     }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public double returnAngle(){
+        return gyro.getHeading();
+    }
+
+    Message msg = Message.obtain(BrainThread.getHandler());
+
+
+
 
 
 }
