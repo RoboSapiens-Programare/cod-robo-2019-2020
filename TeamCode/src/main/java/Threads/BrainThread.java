@@ -10,38 +10,49 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 public class BrainThread extends HandlerThread {
     private static final String TAG = "BrainThread";
 
-    //Handler mainHandler;
+    public int targetAngle, errorAngle;
 
-    ModernRoboticsI2cGyro brainGyro;
+    private Handler mainHandler;
 
-    QueryThread queryThread = new QueryThread(brainGyro);
+//    ModernRoboticsI2cGyro brainGyro;
+
+    QueryThread queryThread;
 
     public BrainThread(ModernRoboticsI2cGyro brainGyro) {
         super("BrainThread");
-        this.brainGyro = brainGyro;
+//        this.brainGyro = brainGyro;
+        queryThread = new QueryThread(brainGyro, this);
     }
 
-//    public static Handler getHandler() {
-//        return mainHandler;
-//    }
-//
-//
-//    @SuppressLint("HandlerLeak")
-//    @Override
-//    protected void onLooperPrepared() {
-//        mainHandler = new Handler() {
-//            @Override
-//            public void handleMessage(Message msg) {
-////                switch (msg.what) {
-////                    case EXAMPLE_TASK:
-////                        Log.d(TAG, "Example Task, arg1: " + msg.arg1 + ", obj: " + msg.obj);
-////                        for (int i = 0; i < 4; i++) {
-////                            Log.d(TAG, "handleMessage: " + i);
-////                            SystemClock.sleep(1000);
-////                        }
-////                        break;
-////                }
-//            }
-//        };
-//    }
+    public Handler getHandler() {
+        return mainHandler;
+    }
+
+    @SuppressLint("HandlerLeak")
+    @Override
+    protected void onLooperPrepared() {
+        mainHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case 1:
+                        targetAngle = msg.arg1;
+
+                        break;
+
+                    case 2:
+                        errorAngle = targetAngle - msg.arg2;
+
+                        break;
+                }
+            }
+        };
+
+        queryThread.start();
+
+    }
+
+
+
+
 }
