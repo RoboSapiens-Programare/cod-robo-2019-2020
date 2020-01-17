@@ -1,38 +1,41 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 public abstract class RobotHardware extends LinearOpMode {
-    protected DcMotor EncoderL = null;
-    protected DcMotor EncoderR = null;
-    protected DcMotor EncoderUP = null;
+    protected DeviceInterfaceModule EncoderL = null;
+    protected DeviceInterfaceModule EncoderR = null;
+    protected DeviceInterfaceModule EncoderUP = null;
 
     public void initialize(){
-        EncoderL = hardwareMap.dcMotor.get("EncoderL");
-        EncoderR = hardwareMap.dcMotor.get("EncoderR");
-        EncoderUP = hardwareMap.dcMotor.get("EncoderUP");
 
-        EncoderL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        EncoderR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        EncoderUP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DigitalChannel L01;
+        DigitalChannel L02;
+        DigitalChannel R01;
+        DigitalChannel R02;
+        DigitalChannel UP01;
+        DigitalChannel UP02;
 
-        EncoderL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        EncoderR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        EncoderUP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        EncoderL = hardwareMap.get(DeviceInterfaceModule.class, "EncoderL");
+        EncoderR = hardwareMap.get(DeviceInterfaceModule.class, "EncoderR");
+        EncoderUP = hardwareMap.get(DeviceInterfaceModule.class, "EncoderUP");
 
-        EncoderL.setPower(0);
-        EncoderR.setPower(0);
-        EncoderUP.setPower(0);
+        L01  = hardwareMap.get(DigitalChannel.class, "0");
+        L02 = hardwareMap.get(DigitalChannel.class, "1");
+        R01  = hardwareMap.get(DigitalChannel.class, "R01");
+        R02 = hardwareMap.get(DigitalChannel.class, "R02");
+        UP01  = hardwareMap.get(DigitalChannel.class, "UP01");
+        UP02 = hardwareMap.get(DigitalChannel.class, "UP02");
 
-        EncoderL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        EncoderR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        EncoderUP.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        L01.setMode(DigitalChannel.Mode.OUTPUT);
+        L02.setMode(DigitalChannel.Mode.OUTPUT);
+        R01.setMode(DigitalChannel.Mode.OUTPUT);
+        R02.setMode(DigitalChannel.Mode.OUTPUT);
+        UP01.setMode(DigitalChannel.Mode.OUTPUT);
+        UP02.setMode(DigitalChannel.Mode.OUTPUT);
 
-        EncoderL.setDirection(DcMotorSimple.Direction.FORWARD);
-        EncoderUP.setDirection(DcMotorSimple.Direction.FORWARD);
-        EncoderR.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 }
