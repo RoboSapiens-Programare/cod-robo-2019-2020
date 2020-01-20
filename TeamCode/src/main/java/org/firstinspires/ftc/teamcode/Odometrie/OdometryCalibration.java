@@ -44,19 +44,19 @@ public abstract class OdometryCalibration extends RobotHardware {
 
         //Begin calibration (if robot is unable to pivot at these speeds, please adjust the constant at the top of the code
         while(getZAngle() < 90 && opModeIsActive()){
-            MotorFR.setPower(-PIVOT_SPEED);
-            MotorBR.setPower(-PIVOT_SPEED);
-            MotorFL.setPower(PIVOT_SPEED);
-            MotorBL.setPower(PIVOT_SPEED);
-            if(getZAngle() < 60) {
-                SetWheelsPowerTank(PIVOT_SPEED, -PIVOT_SPEED);
-            }else{
-                SetWheelsPowerTank(PIVOT_SPEED/2, -PIVOT_SPEED/2);
-            }
 
-            telemetry.addData("IMU Angle", getZAngle());
-            telemetry.update();
+        }  MotorFR.setPower(-PIVOT_SPEED);
+        MotorBR.setPower(-PIVOT_SPEED);
+        MotorFL.setPower(PIVOT_SPEED);
+        MotorBL.setPower(PIVOT_SPEED);
+        if(getZAngle() < 60) {
+            SetWheelsPowerTank(PIVOT_SPEED, -PIVOT_SPEED);
+        }else{
+            SetWheelsPowerTank(PIVOT_SPEED/2, -PIVOT_SPEED/2);
         }
+
+        telemetry.addData("IMU Angle", getZAngle());
+        telemetry.update();
 
        /* SetWheelsPowerTank(PIVOT_SPEED, -PIVOT_SPEED);
 
@@ -127,11 +127,5 @@ public abstract class OdometryCalibration extends RobotHardware {
         return (-Gyro.getAngularOrientation().firstAngle);
     }
 
-    /**
-     * Sets power to all four drive motors
-     * @param rf power for right front motor
-     * @param rb power for right back motor
-     * @param lf power for left front motor
-     * @param lb power for left back motor
-     */
+
 }
