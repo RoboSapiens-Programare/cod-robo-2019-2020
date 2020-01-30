@@ -53,4 +53,9 @@ public class TestSasiu extends LinearOpMode {
         motors[2].setPower(Range.clip(SpeedFRBL + rotate, -maxspeed, maxspeed));
         motors[3].setPower(Range.clip(SpeedFLBR - rotate, -maxspeed, maxspeed));
     }
+
+    protected void CalculateMecanumResult(double y, double x){
+        FRBLResult = Math.signum(y)*Math.pow(y,2) - Math.signum(x)*Math.pow(x,2);
+        FLBRResult = Math.signum(y)*Math.pow(y,2) + Math.signum(x)*Math.pow(x,2);
+    }
 }
