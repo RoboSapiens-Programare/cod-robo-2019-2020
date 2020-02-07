@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
+@TeleOp(name="Test Sasiu")
 public class TestSasiu extends LinearOpMode {
     DcMotor[] motors = new DcMotor[4];
     String[] motorNames = {"MotorFL", "MotorFR", "MotorBL", "MotorBR"};
 
     public static double FLBRResult, FRBLResult;
+    public static final double DEADZONE = 0.1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -20,15 +23,23 @@ public class TestSasiu extends LinearOpMode {
             motors[i].setPower(0);
         }
 
+       // motors[0].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[1].setDirection(DcMotorSimple.Direction.REVERSE);
         motors[2].setDirection(DcMotorSimple.Direction.REVERSE);
-        motors[0].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[3].setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         waitForStart();
 
         while (opModeIsActive()){
-            
+
+            StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,
+                    Math.abs(gamepad1.left_stick_x) > DEADZONE? gamepad1.left_stick_x : 0,
+                    Math.abs(gamepad1.right_stick_x) > DEADZONE? gamepad1.right_stick_x : 0,
+                    0.7);
+
         }
+
 
     }
 
@@ -52,6 +63,12 @@ public class TestSasiu extends LinearOpMode {
         motors[1].setPower(Range.clip(SpeedFRBL - rotate, -maxspeed, maxspeed));
         motors[2].setPower(Range.clip(SpeedFRBL + rotate, -maxspeed, maxspeed));
         motors[3].setPower(Range.clip(SpeedFLBR - rotate, -maxspeed, maxspeed));
+
+        telemetry.addData("MotorFL", motors[0].getCurrentPosition());
+        telemetry.addData("MotorFR", motors[1].getCurrentPosition());
+        telemetry.addData("MotorBL", motors[2].getCurrentPosition());
+        telemetry.addData("MotorBR", motors[3].getCurrentPosition());
+        telemetry.update();
     }
 
     protected void CalculateMecanumResult(double y, double x){
