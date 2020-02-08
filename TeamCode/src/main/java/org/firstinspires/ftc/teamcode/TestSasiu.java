@@ -13,6 +13,14 @@ public class TestSasiu extends LinearOpMode {
 
     public static double FLBRResult, FRBLResult;
     public static final double DEADZONE = 0.1;
+    public enum MODE {
+        DRIVE,
+        INDIV,
+        INDIV_CONST,
+        TELEMETRY
+    }
+    MODE activeMode = MODE.DRIVE;
+    double speedCursor = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -23,7 +31,7 @@ public class TestSasiu extends LinearOpMode {
             motors[i].setPower(0);
         }
 
-       // motors[0].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[0].setDirection(DcMotorSimple.Direction.FORWARD);
         motors[1].setDirection(DcMotorSimple.Direction.REVERSE);
         motors[2].setDirection(DcMotorSimple.Direction.REVERSE);
         motors[3].setDirection(DcMotorSimple.Direction.REVERSE);
@@ -33,11 +41,90 @@ public class TestSasiu extends LinearOpMode {
 
         while (opModeIsActive()){
 
-            StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,
-                    Math.abs(gamepad1.left_stick_x) > DEADZONE? gamepad1.left_stick_x : 0,
-                    Math.abs(gamepad1.right_stick_x) > DEADZONE? gamepad1.right_stick_x : 0,
-                    0.7);
+            if(gamepad2.a){
+                activeMode = MODE.DRIVE;
+            }else if(gamepad2.b){
+                activeMode = MODE.INDIV;
+            }else if(gamepad2.x){
+                activeMode = MODE.TELEMETRY;
+            }else if(gamepad2.y){
+                activeMode = MODE.INDIV_CONST;
+            }
 
+            switch (activeMode){
+                case DRIVE:
+                    StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,
+                            Math.abs(gamepad1.left_stick_x) > DEADZONE? gamepad1.left_stick_x : 0,
+                            Math.abs(gamepad1.right_stick_x) > DEADZONE? gamepad1.right_stick_x : 0,
+                            0.7);
+                    break;
+
+                case INDIV:
+                    if(gamepad1.x){
+                        motors[0].setPower(gamepad1.left_stick_y);
+                    }
+                    if(gamepad1.y){
+                        motors[1].setPower(gamepad1.left_stick_y);
+                    }
+                    if(gamepad1.a){
+                        motors[2].setPower(gamepad1.left_stick_y);
+                    }
+                    if(gamepad1.b){
+                        motors[3].setPower(gamepad1.left_stick_y);
+                    }
+
+                    telemetry.addData("Y", gamepad1.left_stick_y);
+                    telemetry.update();
+
+                    break;
+
+                case INDIV_CONST:
+                    if(Math.abs(gamepad1.left_stick_y) > 0.1){
+                        speedCursor += gamepad1.left_stick_y/100;
+                        sleep(35);
+                    }
+
+                    if(gamepad1.x){
+                        motors[0].setPower(speedCursor);
+                    }
+                    if(gamepad1.y){
+                        motors[1].setPower(speedCursor);
+                    }
+                    if(gamepad1.a){
+                        motors[2].setPower(speedCursor);
+                    }
+                    if(gamepad1.b){
+                        motors[3].setPower(speedCursor);
+                    }
+                    if(gamepad1.right_bumper){
+                        for(DcMotor motor : motors){
+                            motor.setPower(0);
+                        }
+                    }
+
+                    telemetry.addData("speedCursor", speedCursor);
+                    telemetry.update();
+
+                    break;
+
+                case TELEMETRY:
+                    StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,
+                            Math.abs(gamepad1.left_stick_x) > DEADZONE? gamepad1.left_stick_x : 0,
+                            Math.abs(gamepad1.right_stick_x) > DEADZONE? gamepad1.right_stick_x : 0,
+                            0.7);
+
+                    telemetry.addData("MotorFL pow", motors[0].getPower());
+                    telemetry.addData("MotorFR pow", motors[1].getPower());
+                    telemetry.addData("MotorBL pow", motors[2].getPower());
+                    telemetry.addData("MotorBR pow", motors[3].getPower());
+                    telemetry.addLine();
+                    telemetry.addData("MotorFL enc", motors[0].getCurrentPosition());
+                    telemetry.addData("MotorFR enc", motors[1].getCurrentPosition());
+                    telemetry.addData("MotorBL enc", motors[2].getCurrentPosition());
+                    telemetry.addData("MotorBR enc", motors[3].getCurrentPosition());
+                    telemetry.update();
+                    break;
+            }
         }
 
 
@@ -64,11 +151,7 @@ public class TestSasiu extends LinearOpMode {
         motors[2].setPower(Range.clip(SpeedFRBL + rotate, -maxspeed, maxspeed));
         motors[3].setPower(Range.clip(SpeedFLBR - rotate, -maxspeed, maxspeed));
 
-        telemetry.addData("MotorFL", motors[0].getCurrentPosition());
-        telemetry.addData("MotorFR", motors[1].getCurrentPosition());
-        telemetry.addData("MotorBL", motors[2].getCurrentPosition());
-        telemetry.addData("MotorBR", motors[3].getCurrentPosition());
-        telemetry.update();
+
     }
 
     protected void CalculateMecanumResult(double y, double x){

@@ -19,7 +19,7 @@ public class TestSasiuTurbo extends LinearOpMode {
             motors[i].setPower(0);
         }
 
-        //motors[0].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[0].setDirection(DcMotorSimple.Direction.FORWARD);
         motors[1].setDirection(DcMotorSimple.Direction.REVERSE);
         motors[2].setDirection(DcMotorSimple.Direction.REVERSE);
         motors[3].setDirection(DcMotorSimple.Direction.REVERSE);
@@ -46,16 +46,16 @@ public class TestSasiuTurbo extends LinearOpMode {
 
     public void gamepad1() {
         if (gamepad1.x){
-            motors[0].setPower(0.8);
-        }
+            motors[0].setPower(0.2);
+        } else motors[0].setPower(0);
         if (gamepad1.y){
-            motors[1].setPower(0.8);
-        }
+            motors[1].setPower(0.2);
+        } else motors[1].setPower(0);
         if (gamepad1.a){
-            motors[2].setPower(0.8);
-        }
+            motors[2].setPower(0.2);
+        }else motors[2].setPower(0);
         if (gamepad1.b){
-            motors[3].setPower(0.8);
-        }
+            motors[3].setPower(0.2);
+        }else motors[3].setPower(0);
     }
 }
