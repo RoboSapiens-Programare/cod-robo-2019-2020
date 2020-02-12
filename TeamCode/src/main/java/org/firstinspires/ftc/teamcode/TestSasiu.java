@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,8 +9,10 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="Test Sasiu")
 public class TestSasiu extends LinearOpMode {
-    DcMotor[] motors = new DcMotor[4];
-    String[] motorNames = {"MotorFL", "MotorFR", "MotorBL", "MotorBR"};
+    private DcMotor[] motors = new DcMotor[4];
+    private String[] motorNames = {"MotorFL", "MotorFR", "MotorBL", "MotorBR"};
+    BNO055IMU imu;
+    private DcMotor LeftEncoder, RightEncoder, MiddleEncoder;
 
     public static double FLBRResult, FRBLResult;
     public static final double DEADZONE = 0.1;
@@ -31,10 +34,19 @@ public class TestSasiu extends LinearOpMode {
             motors[i].setPower(0);
         }
 
-        motors[0].setDirection(DcMotorSimple.Direction.FORWARD);
-        motors[1].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[0].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[1].setDirection(DcMotorSimple.Direction.FORWARD);
         motors[2].setDirection(DcMotorSimple.Direction.REVERSE);
-        motors[3].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[3].setDirection(DcMotorSimple.Direction.FORWARD);
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        imu.initialize(parameters);
+
+        LeftEncoder = hardwareMap.dcMotor.get("LeftEncoder");
+        RightEncoder = hardwareMap.dcMotor.get("RightEncoder");
+        MiddleEncoder = hardwareMap.dcMotor.get("MiddleEncoder");
 
 
         waitForStart();
@@ -56,7 +68,7 @@ public class TestSasiu extends LinearOpMode {
                     StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,
                             Math.abs(gamepad1.left_stick_x) > DEADZONE? gamepad1.left_stick_x : 0,
                             Math.abs(gamepad1.right_stick_x) > DEADZONE? gamepad1.right_stick_x : 0,
-                            0.7);
+                            0.9);
                     break;
 
                 case INDIV:
@@ -111,17 +123,21 @@ public class TestSasiu extends LinearOpMode {
                     StrafeWithAngle(Math.abs(gamepad1.left_stick_y) > DEADZONE? -gamepad1.left_stick_y : 0,
                             Math.abs(gamepad1.left_stick_x) > DEADZONE? gamepad1.left_stick_x : 0,
                             Math.abs(gamepad1.right_stick_x) > DEADZONE? gamepad1.right_stick_x : 0,
-                            0.7);
+                            0.9);
 
-                    telemetry.addData("MotorFL pow", motors[0].getPower());
-                    telemetry.addData("MotorFR pow", motors[1].getPower());
-                    telemetry.addData("MotorBL pow", motors[2].getPower());
-                    telemetry.addData("MotorBR pow", motors[3].getPower());
-                    telemetry.addLine();
-                    telemetry.addData("MotorFL enc", motors[0].getCurrentPosition());
-                    telemetry.addData("MotorFR enc", motors[1].getCurrentPosition());
-                    telemetry.addData("MotorBL enc", motors[2].getCurrentPosition());
-                    telemetry.addData("MotorBR enc", motors[3].getCurrentPosition());
+                    telemetry.addData("Heading", imu.getAngularOrientation().firstAngle);
+                    telemetry.addData("Left Encoder", LeftEncoder.getCurrentPosition());
+                    telemetry.addData("Right Encoder", RightEncoder.getCurrentPosition());
+                    telemetry.addData("Middle Encoder", MiddleEncoder.getCurrentPosition());
+//                    telemetry.addData("MotorFL pow", motors[0].getPower());
+//                    telemetry.addData("MotorFR pow", motors[1].getPower());
+//                    telemetry.addData("MotorBL pow", motors[2].getPower());
+//                    telemetry.addData("MotorBR pow", motors[3].getPower());
+//                    telemetry.addLine();
+//                    telemetry.addData("MotorFL enc", motors[0].getCurrentPosition());
+//                    telemetry.addData("MotorFR enc", motors[1].getCurrentPosition());
+//                    telemetry.addData("MotorBL enc", motors[2].getCurrentPosition());
+//                    telemetry.addData("MotorBR enc", motors[3].getCurrentPosition());
                     telemetry.update();
                     break;
             }
