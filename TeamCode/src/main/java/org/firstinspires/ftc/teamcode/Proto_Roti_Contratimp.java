@@ -27,12 +27,12 @@ public class Proto_Roti_Contratimp extends LinearOpMode {
 
         while (opModeIsActive()){
             if (gamepad1.a) {
-                LeftRoata.setPower(0.8);
-                RightRoata.setPower(0.8);
+                LeftRoata.setPower(0.9);
+                RightRoata.setPower(0.9);
             }
             else if(gamepad1.b){
-                LeftRoata.setPower(-0.8);
-                RightRoata.setPower(-0.8);
+                LeftRoata.setPower(-0.9);
+                RightRoata.setPower(-0.9);
             }
             else{
                 LeftRoata.setPower(0);
